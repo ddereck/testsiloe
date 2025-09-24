@@ -1,0 +1,70 @@
+{
+  "project_info": {
+    "project_number": "713737911363",
+    "project_id": "application-siloe",
+    "storage_bucket": "application-siloe.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:713737911363:android:8234380de7303d9a9568f6",
+        "android_client_info": {
+          "package_name": "com.example.siloe_application"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "713737911363-2u2tq4eidkrh3547tqqi7k4vjlall4d0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.siloe_application",
+            "certificate_hash": "d4c77eae496e017ac8da16f4ce8b5e36472d8f0a"
+          }
+        },
+        {
+          "client_id": "713737911363-46i8aqhpf89n5c74qatoh3frd8nrssq3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.siloe_application",
+            "certificate_hash": "dae35c6ca574fb8bca4024c88c757e69dc3296ed"
+          }
+        },
+        {
+          "client_id": "713737911363-ghhg48rlha9s4jdodbdfq1e0f435rj71.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.siloe_application",
+            "certificate_hash": "af838856ea47782dc051fbf445a436cdcc5f502e"
+          }
+        },
+        {
+          "client_id": "713737911363-ja0h3r4ddp3tp5ng263144ng4e8ljrj7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCg95LCiKkbIE2rgdt2A1vmsm6ZvFxoBsU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "713737911363-ja0h3r4ddp3tp5ng263144ng4e8ljrj7.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "713737911363-ehdbeaqn7ca1itreftqndq92f23lskc1.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.siloeApplication"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

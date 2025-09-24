@@ -1,0 +1,13 @@
+#Flutter Wrapper
+-keep class com.example.myapp.** { *; }
+-keep class io.flutter.app.** { *; }
+-keep class io.flutter.plugin.**  { *; }
+-keep class io.flutter.util.**  { *; }
+-keep class io.flutter.view.**  { *; }
+-keep class io.flutter.**  { *; }
+-keep class io.flutter.plugins.**  { *; }
+-keep class io.grpc.** {*;}
+-keep class com.google.android.play.** { *; }
+-dontwarn com.google.android.play.**
+-keep class io.flutter.embedding.engine.deferredcomponents.** { *; }
+-keep class com.google.android.play.core.splitinstall.** { *; }

@@ -1,0 +1,241 @@
+import 'package:get/get.dart';
+
+// UseCases
+
+import '../src/controllers/post_logging_controller.dart'
+    show PostLoggingController;
+import '../src/core/resources/firebase_resources.dart' show FirebaseResources;
+import '../src/features/authentication/domain/usecases/logout_user_to_laravel_usecase.dart'
+    show LogoutUserToLaravelUseCase;
+import '../src/features/authentication/domain/usecases/reset_password_usecase.dart'
+    show ResetPasswordUseCase;
+import '../src/features/authentication/domain/usecases/sign_in_to_laravel_usecase.dart'
+    show SignInToLaravelUseCase;
+import '../src/features/authentication/domain/usecases/sign_up_with_email_and_password_usecase.dart'
+    show SignUpWithEmailAndPasswordUseCase;
+import '../src/features/categorie/domain/usecases/create_categorie_usecase.dart'
+    show CreateCategorieUseCase;
+import '../src/features/categorie/domain/usecases/delete_categorie_usecase.dart'
+    show DeleteCategorieUseCase;
+import '../src/features/categorie/domain/usecases/get_all_categories_usecase.dart'
+    show GetAllCategoriesUseCase;
+import '../src/features/categorie/domain/usecases/get_categrorie_by_id_usecase.dart'
+    show GetCategorieByIdUseCase;
+import '../src/features/categorie/domain/usecases/update_categorie_usecase.dart'
+    show UpdateCategorieUseCase;
+import '../src/features/commentaire/domain/usecases/create_commentaire_usecase.dart'
+    show CreateCommentaireUseCase;
+import '../src/features/commentaire/domain/usecases/get_commentaires_usecase.dart'
+    show GetCommentairesUseCase;
+import '../src/features/demande_rencontre/domain/usecases/accepter_demande_rencontre_usecase.dart'
+    show AccepterDemandeRencontreUseCase;
+import '../src/features/demande_rencontre/domain/usecases/annuler_demande_rencontre_usecase.dart'
+    show AnnulerDemandeRencontreUseCase;
+import '../src/features/demande_rencontre/domain/usecases/create_demande_rencontre_usecase.dart'
+    show CreateDemandeRencontreUseCase;
+import '../src/features/demande_rencontre/domain/usecases/delete_demande_rencontre_usecase.dart'
+    show DeleteDemandeRencontreUseCase;
+import '../src/features/demande_rencontre/domain/usecases/get_demande_rencontre_by_id_usecase.dart'
+    show GetDemandeRencontreByIdUseCase;
+import '../src/features/demande_rencontre/domain/usecases/get_demandes_rencontre_usecase.dart'
+    show GetDemandesRencontreUseCase;
+import '../src/features/demande_rencontre/domain/usecases/get_mes_demandes_rencontre_usecase.dart'
+    show GetMesDemandesRencontreUseCase;
+import '../src/features/demande_rencontre/domain/usecases/refuser_demande_rencontre_usecase.dart'
+    show RefuserDemandeRencontreUseCase;
+import '../src/features/demande_rencontre/domain/usecases/update_demande_rencontre_usecase.dart'
+    show UpdateDemandeRencontreUseCase;
+import '../src/features/don/domain/usecases/create_don_usecase.dart'
+    show CreateDonUseCase;
+import '../src/features/don/domain/usecases/delete_don_usecase.dart'
+    show DeleteDonUseCase;
+import '../src/features/don/domain/usecases/fedapay_don_usecase.dart'
+    show FedapayCallbackUseCase;
+import '../src/features/don/domain/usecases/get_don_by_id_usecase.dart'
+    show GetDonByIdUseCase;
+import '../src/features/don/domain/usecases/get_dons_admin_usecase.dart'
+    show GetDonsAdminUseCase;
+import '../src/features/don/domain/usecases/get_dons_historique_public_usecase.dart'
+    show GetDonsHistoriquePublicUseCase;
+import '../src/features/don/domain/usecases/get_mes_dons_usecase.dart'
+    show GetMesDonsUseCase;
+import '../src/features/evenement/domain/usecases/create_evenement_usecase.dart'
+    show CreateEvenementUseCase;
+import '../src/features/evenement/domain/usecases/delete_evenement_usecase.dart'
+    show DeleteEvenementUseCase;
+import '../src/features/evenement/domain/usecases/get_all_evenements_usecase.dart'
+    show GetAllEvenementsUseCase;
+import '../src/features/evenement/domain/usecases/get_evenement_by_id_usecase.dart'
+    show GetEvenementByIdUseCase;
+import '../src/features/evenement/domain/usecases/update_evenement_usecase.dart'
+    show UpdateEvenementUseCase;
+import '../src/features/evenement_inscription/domain/usecases/annuler_inscription_usecase.dart'
+    show AnnulerInscriptionUseCase;
+import '../src/features/evenement_inscription/domain/usecases/confirmer_inscription_usecase.dart'
+    show ConfirmerInscriptionUseCase;
+import '../src/features/evenement_inscription/domain/usecases/get_inscriptions_usecase.dart'
+    show GetInscriptionsUseCase;
+import '../src/features/evenement_inscription/domain/usecases/inscrire_evenement_usecase.dart'
+    show InscrireEvenementUseCase;
+import '../src/features/launcher/adapters/launcher_controller.dart'
+    show LauncherController;
+import '../src/features/notification/domain/usecases/create_notification_usecase.dart'
+    show CreateNotificationUseCase;
+import '../src/features/notification/domain/usecases/delete_notification_usecase.dart'
+    show DeleteNotificationUseCase;
+import '../src/features/notification/domain/usecases/get_notification_by_id_usecase.dart'
+    show GetNotificationByIdUseCase;
+import '../src/features/notification/domain/usecases/get_notifications_usecase.dart'
+    show GetNotificationsUseCase;
+import '../src/features/notification/domain/usecases/marquer_norifications_comme_lues_usecase.dart'
+    show MarquerNotificationsCommeLuesUseCase;
+import '../src/features/notification/domain/usecases/update_notification_usecase.dart'
+    show UpdateNotificationUseCase;
+import '../src/features/onboarding/adapters/onboarding_controller.dart'
+    show OnboardingController;
+import '../src/features/programme/domain/usecases/create_programme_usecase.dart'
+    show CreateProgrammeUseCase;
+import '../src/features/programme/domain/usecases/delete_programme_usecase.dart'
+    show DeleteProgrammeUseCase;
+import '../src/features/programme/domain/usecases/get_programme_by_id_usecase.dart'
+    show GetProgrammeByIdUseCase;
+import '../src/features/programme/domain/usecases/get_programmes_usecase.dart'
+    show GetProgrammesUseCase;
+import '../src/features/programme/domain/usecases/update_programme_usecase.dart'
+    show UpdateProgrammeUseCase;
+import '../src/features/publication/domain/usecases/create_publication_usecase.dart'
+    show CreatePublicationUseCase;
+import '../src/features/publication/domain/usecases/delete_publication_usecase.dart'
+    show DeletePublicationUseCase;
+import '../src/features/publication/domain/usecases/get_all_publication_usecase.dart'
+    show GetAllPublicationUseCase;
+import '../src/features/publication/domain/usecases/get_publication_by_id_usecase.dart'
+    show GetPublicationByIdUseCase;
+import '../src/features/publication/domain/usecases/update_publication_usecase.dart'
+    show UpdatePublicationUseCase;
+import '../src/features/publication_type/domain/usecases/create_publication_type_usecase.dart'
+    show CreatePublicationTypeUseCase;
+import '../src/features/publication_type/domain/usecases/delete_publication_type_usecase.dart'
+    show DeletePublicationTypeUseCase;
+import '../src/features/publication_type/domain/usecases/get_all_publication_type_usecase.dart'
+    show GetAllPublicationTypeUseCase;
+import '../src/features/publication_type/domain/usecases/get_publication_type_by_id_usecase.dart'
+    show GetPublicationTypeByIdUseCase;
+import '../src/features/publication_type/domain/usecases/update_publication_type_usecase.dart'
+    show UpdatePublicationTypeUseCase;
+import '../src/features/requete_priere/domain/usecases/approuver_requete_priere_usecase.dart'
+    show ApprouverRequetePriereUseCase;
+import '../src/features/requete_priere/domain/usecases/create_requete_priere_usecase.dart'
+    show CreateRequetePriereUseCase;
+import '../src/features/requete_priere/domain/usecases/delete_requete_priere_usecase.dart'
+    show DeleteRequetePriereUseCase;
+import '../src/features/requete_priere/domain/usecases/get_requete_priere_by_id_usecase.dart'
+    show GetRequetePriereByIdUseCase;
+import '../src/features/requete_priere/domain/usecases/get_requetes_priere_usecase.dart'
+    show GetRequetesPriereUseCase;
+import '../src/features/requete_priere/domain/usecases/rejeter_requete_priere_usecase.dart'
+    show RejeterRequetePriereUseCase;
+import '../src/features/requete_priere/domain/usecases/update_requete_priere_usecase.dart'
+    show UpdateRequetePriereUseCase;
+import '../src/features/user/domain/usecases/ban_user_usecase.dart'
+    show BanUserUseCase;
+import '../src/features/user/domain/usecases/get_all_users_usecase.dart'
+    show GetAllUsersUseCase;
+import '../src/features/user/domain/usecases/get_user_by_id_usecase.dart';
+import '../src/features/user/domain/usecases/get_current_user_usecase.dart';
+import '../src/features/user/domain/usecases/delete_current_user_account_usecase.dart';
+import '../src/features/authentication/domain/usecases/sign_in_with_email_and_password_usecase.dart';
+import '../src/features/authentication/domain/usecases/sign_in_with_google_usecase.dart'
+    show SignInWithGoogleUseCase;
+import '../src/features/authentication/domain/usecases/sign_in_with_apple_usecase.dart'
+    show SignInWithAppleUseCase;
+import '../src/features/authentication/domain/usecases/logout_user_usecase.dart';
+
+// Repositories
+import '../src/features/user/domain/repositories/user_repository.dart';
+import '../src/features/user/data/repositories_impl/user_repository_impl.dart';
+import '../src/features/authentication/domain/repositories/authentication_repository.dart';
+import '../src/features/authentication/data/repositories_impl/authentication_repository_impl.dart';
+import '../src/features/publication_type/domain/repositories/publication_type_repository.dart';
+import '../src/features/publication_type/data/repositories_impl/publication_type_repository_impl.dart';
+import '../src/features/publication/domain/repositories/publication_repository.dart';
+import '../src/features/publication/data/repositories_impl/publication_repository_impl.dart';
+import '../src/features/requete_priere/domain/repositories/requete_priere_repository.dart';
+import '../src/features/requete_priere/data/repositories_impl/requete_priere_repository_impl.dart';
+import '../src/features/programme/domain/repositories/programme_repository.dart';
+import '../src/features/programme/data/repositories_impl/programme_repository_impl.dart';
+import '../src/features/notification/domain/repositories/notification_repository.dart';
+import '../src/features/notification/data/repositories_impl/notification_repository_impl.dart';
+import '../src/features/evenement_inscription/domain/repositories/evenement_inscription_repository.dart';
+import '../src/features/evenement_inscription/data/repositories_impl/evenement_inscription_repository_impl.dart';
+import '../src/features/evenement/domain/repositories/evenement_repository.dart';
+import '../src/features/evenement/data/repositories_impl/evenement_repository_impl.dart';
+import '../src/features/don/domain/repositories/don_repository.dart';
+import '../src/features/don/data/repositories_impl/don_repository_impl.dart';
+import '../src/features/demande_rencontre/domain/repositories/demande_rencontre_repository.dart';
+import '../src/features/demande_rencontre/data/repositories_impl/demande_rencontre_repository_impl.dart';
+import '../src/features/commentaire_report/domain/repositories/commentaire_report_repository.dart';
+import '../src/features/commentaire_report/data/repositories_impl/commentaire_report_repository_impl.dart';
+import '../src/features/commentaire_reaction/domain/repositories/commentaire_reaction_repository.dart';
+import '../src/features/commentaire_reaction/data/repositories_impl/commentaire_reaction_repository_impl.dart';
+import '../src/features/commentaire/domain/repositories/commentaire_repository.dart';
+import '../src/features/commentaire/data/repositories_impl/commentaire_repository_impl.dart';
+import '../src/features/categorie/domain/repositories/categorie_repository.dart';
+import '../src/features/categorie/data/repositories_impl/categorie_repository_impl.dart';
+
+// Datasources
+import '../src/features/user/data/data_sources/user_data_source.dart';
+import '../src/features/user/data/data_sources/user_data_source_impl.dart';
+import '../src/features/authentication/data/data_sources/authentication_data_source.dart';
+import '../src/features/authentication/data/data_sources/authentication_data_source_impl.dart';
+import '../src/features/publication_type/data/data_sources/publication_type_data_source.dart';
+import '../src/features/publication_type/data/data_sources/publication_type_data_source_impl.dart';
+import '../src/features/publication/data/data_sources/publication_data_source.dart';
+import '../src/features/publication/data/data_sources/publication_data_source_impl.dart';
+import '../src/features/requete_priere/data/data_sources/requete_priere_data_source.dart';
+import '../src/features/requete_priere/data/data_sources/requete_priere_data_source_impl.dart';
+import '../src/features/programme/data/data_sources/programme_data_source.dart';
+import '../src/features/programme/data/data_sources/programme_data_source_impl.dart';
+import '../src/features/notification/data/data_sources/notification_data_source.dart';
+import '../src/features/notification/data/data_sources/notification_data_source_impl.dart';
+import '../src/features/evenement_inscription/data/data_sources/evenement_inscription_data_source.dart';
+import '../src/features/evenement_inscription/data/data_sources/evenement_inscription_data_source_impl.dart';
+import '../src/features/evenement/data/data_sources/evenement_data_source.dart';
+import '../src/features/evenement/data/data_sources/evenement_data_source_impl.dart';
+import '../src/features/don/data/data_sources/don_data_source.dart';
+import '../src/features/don/data/data_sources/don_data_source_impl.dart';
+import '../src/features/demande_rencontre/data/data_sources/demande_rencontre_data_source.dart';
+import '../src/features/demande_rencontre/data/data_sources/demande_rencontre_data_source_impl.dart';
+import '../src/features/commentaire_report/data/data_sources/commentaire_report_data_source.dart';
+import '../src/features/commentaire_report/data/data_sources/commentaire_report_data_source_impl.dart';
+import '../src/features/commentaire_reaction/data/data_sources/commentaire_reaction_data_source.dart';
+import '../src/features/commentaire_reaction/data/data_sources/commentaire_reaction_data_source_impl.dart';
+import '../src/features/commentaire/data/data_sources/commentaire_data_source.dart';
+import '../src/features/commentaire/data/data_sources/commentaire_data_source_impl.dart';
+import '../src/features/categorie/data/data_sources/categorie_data_source.dart';
+import '../src/features/categorie/data/data_sources/categorie_data_source_impl.dart';
+
+// Controllers
+import '../src/features/user/domain/usecases/get_user_photo_usecase.dart'
+    show UpdateUserPhotoUseCase;
+import '../src/features/user/domain/usecases/unban_user_usecase.dart'
+    show UnbanUserUseCase;
+import '../src/features/user/domain/usecases/update_user_usecase.dart'
+    show UpdateUserUseCase;
+import '../src/features/user/presentation/adapters/user_controller.dart';
+import '../src/features/authentication/presentation/adapters/authentication_controller.dart';
+import '../src/features/publication_type/presentation/adapters/publication_type_controller.dart';
+import '../src/features/publication/presentation/adapters/publication_controller.dart';
+import '../src/features/requete_priere/presentation/adapters/requete_priere_controller.dart';
+import '../src/features/programme/presentation/adapters/programme_controller.dart';
+import '../src/features/notification/presentation/adapters/notification_controller.dart';
+import '../src/features/evenement_inscription/presentation/adapters/evenement_inscription_controller.dart';
+import '../src/features/evenement/presentation/adapters/evenement_controller.dart';
+import '../src/features/don/presentation/adapters/don_controller.dart';
+import '../src/features/demande_rencontre/presentation/adapters/demande_rencontre_controller.dart';
+import '../src/features/commentaire_report/presentation/adapters/commentaire_report_controller.dart';
+import '../src/features/commentaire_reaction/presentation/adapters/commentaire_reaction_controller.dart';
+import '../src/features/commentaire/presentation/adapters/commentaire_controller.dart';
+import '../src/features/categorie/presentation/adapters/categorie_controller.dart';
+
+part 'app_bindings.main.dart';
