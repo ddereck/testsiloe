@@ -3,6 +3,10 @@ import 'package:flutter_tabler_icons/flutter_tabler_icons.dart'
     show TablerIcons;
 import 'package:get/get.dart';
 
+import '../../../../../commons/ui/widgets/text_field_edit_widget.dart'
+    show TextFieldEditWidget;
+import '../../../../../core/utils/app_constants_utils.dart'
+    show AppConstantsUtils;
 import '../../../../../di/di_helper.dart' show DiHelper;
 import '../../../../publication/domain/entities/entity_publication.dart'
     show EntityPublication;
@@ -22,46 +26,48 @@ class AddCommentFormWidget extends StatelessWidget {
     final commentUiController =
         DiHelper.findOrCreate(creator: () => CommentaireUIController())
           ..initComments(publicationId: publication.id!);
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-      child: Form(
-        key: commentUiController.commentFormState,
-        child: TextFormField(
-          controller: commentUiController.commentController,
-          focusNode: commentUiController.commentFocusNode,
-          decoration: InputDecoration(
-            hintText: "Ecrire un commentaire...",
-            filled: true,
-            fillColor: Colors.grey[200],
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(30.0),
-              borderSide: BorderSide.none,
+    return Form(
+      key: commentUiController.commentFormState,
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(AppConstantsUtils.radius),
+          color: Theme.of(context).highlightColor,
+        ),
+        margin: const EdgeInsets.only(
+          bottom: AppConstantsUtils.itemSpacing,
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          spacing: AppConstantsUtils.itemSpacing,
+          children: [
+            Expanded(
+              child: TextFieldEditWidget(
+                focusNode: commentUiController.commentFocusNode,
+                controller: commentUiController.commentController,
+                inputColor: Theme.of(context).highlightColor,
+                hint: "Ecrivez un commentaire",
+                withTitleWhenTexting: false,
+                minLines: 1,
+                maxLines: 5,
+                blocColor: Theme.of(context).highlightColor,
+                keyboardType: TextInputType.multiline,
+              ),
             ),
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            suffixIcon: Obx(() {
-              if (commentUiController.isSubmitting.value) {
-                return const Padding(
-                  padding: EdgeInsets.all(12.0),
-                  child: CircularProgressIndicator(),
-                );
-              }
-              return IconButton(
-                icon: const Icon(TablerIcons.send),
-                onPressed: () async {
-                  if (commentUiController.commentFormState.currentState!
-                      .validate()) {
-                    await commentUiController.onSubmitComment(
-                        publicationId: publication.id!);
-                  }
-                },
-              );
-            }),
-          ),
-          minLines: 1,
-          maxLines: 5,
-          keyboardType: TextInputType.multiline,
+            IconButton(
+              onPressed: () async {
+                if (commentUiController.commentFormState.currentState!
+                    .validate()) {
+                  await commentUiController.onSubmitComment(publicationId: publication.id!);
+                }
+              },
+              icon: Obx(() {
+                if (commentUiController.isSubmitting.value) {
+                  return const CircularProgressIndicator.adaptive();
+                }
+                return const Icon(TablerIcons.send);
+              }),
+            ),
+          ],
         ),
       ),
     );

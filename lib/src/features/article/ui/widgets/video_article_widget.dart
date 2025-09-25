@@ -9,6 +9,10 @@ import '../../../publication/domain/entities/entity_publication.dart'
 import '../../adapters/article_details_ui_controller.dart'
     show ArticleDetailsUIController;
 import '../pages/fullscreen_video_page.dart';
+import 'package:siloe/src/core/utils/routes_utils.dart';
+import 'package:siloe/src/di/controllers_provider.dart';
+import 'package:siloe/src/features/article/adapters/article_datas.dart';
+import 'package:siloe/src/features/user/domain/enums/user_role_enums.dart';
 
 class VideoArticleWidget extends StatefulWidget {
   final EntityPublication publication;
@@ -53,7 +57,8 @@ class _VideoArticleWidgetState extends State<VideoArticleWidget> {
                   AspectRatio(
                     aspectRatio: 16 / 9,
                     child: ClipRRect(
-                      borderRadius: BorderRadius.circular(12.0),
+                      borderRadius:
+                          BorderRadius.circular(0), // No radius for video
                       child: player,
                     ),
                   ),
@@ -63,16 +68,14 @@ class _VideoArticleWidgetState extends State<VideoArticleWidget> {
                     child: IconButton(
                       icon: const Icon(Icons.fullscreen, color: Colors.white),
                       onPressed: () {
-                        if (ytController != null) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => FullscreenVideoPage(
-                                controller: ytController,
-                              ),
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => FullscreenVideoPage(
+                              controller: ytController,
                             ),
-                          );
-                        }
+                          ),
+                        );
                       },
                     ),
                   ),
@@ -85,17 +88,46 @@ class _VideoArticleWidgetState extends State<VideoArticleWidget> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  widget.publication.titre ?? 'Sans titre',
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        widget.publication.titre ?? 'Sans titre',
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    Obx(() {
+                      final user =
+                          ControllersProvider.USER_CONTROLLER.user.value;
+                      final canEdit = user?.roles.any((r) =>
+                              r.toUserRole().isAdminOrReverendOrEditeur) ??
+                          false;
+                      if (canEdit) {
+                        return IconButton(
+                          onPressed: () {
+                            RoutesUtils.changePage(
+                              AppRoutes.updateArticle,
+                              arguments: {
+                                ArticleDatas.articleArg: widget.publication
+                              },
+                            );
+                          },
+                          icon: const Icon(Icons.edit, color: Colors.grey),
+                        );
+                      }
+                      return const SizedBox.shrink();
+                    }),
+                  ],
                 ),
                 const SizedBox(height: 8),
-                if (widget.publication.description != null)
+                if (widget.publication.sousTitre != null)
                   Text(
-                    widget.publication.description!,
+                    widget.publication.sousTitre!,
                     style: TextStyle(
                       fontSize: 14,
                       color: Colors.grey[700],

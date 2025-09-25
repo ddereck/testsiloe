@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:siloe/src/commons/ui/widgets/custom_app_bar.dart';
 import 'package:siloe/src/core/utils/routes_utils.dart';
+import 'package:siloe/src/features/home/adapters/home_ui_controller.dart';
+import 'package:siloe/src/features/home/ui/widgets/floatting_bottom_nav.dart';
 import 'settings_list_item.dart';
 
 class SettingsPage extends StatelessWidget {
@@ -8,59 +11,71 @@ class SettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Using available assets. In a real app, ensure all assets are present.
-    const String editeurImage = 'assets/images/reverend.png';
-    const String rencontresImage = 'assets/images/events.png';
-    const String priereImage = 'assets/images/priere.png';
-    const String donsImage = 'assets/images/don.png';
-    const String evenementsImage = 'assets/images/events.png';
+    final homeUiController = Get.find<HomeUIController>();
+    // In a real app, these counts would be fetched from a controller.
+    const int demandeRencontresCount = 3;
+    const int requetesPriereCount = 3;
+    const int donsCount = 9;
 
     return Scaffold(
       appBar: CustomAppBar(title: 'Paramètres'),
-      body: ListView(
-        padding: const EdgeInsets.all(16.0),
+      body: Stack(
         children: [
-          SettingsListItem(
-            title: 'Editeur de la communauté',
-            imageAsset: editeurImage,
-            onTap: () {
-              RoutesUtils.changePage(AppRoutes.editeurs);
-            },
+          ListView(
+            padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 80.0),
+            children: [
+              SettingsListItem(
+                title: 'Editeur de la communauté',
+                imageAsset: 'assets/images/reverend.png',
+                onTap: () {
+                  RoutesUtils.changePage(AppRoutes.editeurs);
+                },
+              ),
+              SettingsListItem(
+                title: 'Les demandes de rencontres',
+                subtitle: 'Reverend',
+                imageAsset: 'assets/images/events.png',
+                notificationCount: demandeRencontresCount,
+                onTap: () {
+                  RoutesUtils.changePage(AppRoutes.rdvs);
+                },
+              ),
+              SettingsListItem(
+                title: 'Requêtes de prière',
+                subtitle: 'Reverend',
+                imageAsset: 'assets/images/priere.png',
+                notificationCount: requetesPriereCount,
+                onTap: () {
+                  RoutesUtils.changePage(AppRoutes.prayerRequestsList);
+                },
+              ),
+              SettingsListItem(
+                title: 'Dons',
+                subtitle: 'Reverend',
+                imageAsset: 'assets/images/don.png',
+                notificationCount: donsCount,
+                onTap: () {
+                  RoutesUtils.changePage(AppRoutes.adminDonationsList);
+                },
+              ),
+              SettingsListItem(
+                title: 'Evenements',
+                subtitle: 'Admin',
+                imageAsset: 'assets/images/events.png',
+                onTap: () {
+                  RoutesUtils.changePage(AppRoutes.eventsAndPrograms);
+                },
+              ),
+            ],
           ),
-          SettingsListItem(
-            title: 'Les demandes de rencontres',
-            subtitle: 'Reverend',
-            imageAsset: rencontresImage,
-            notificationCount: 3,
-            onTap: () {
-              RoutesUtils.changePage(AppRoutes.rdvs);
-            },
-          ),
-          SettingsListItem(
-            title: 'Requêtes de prière',
-            subtitle: 'Reverend',
-            imageAsset: priereImage,
-            notificationCount: 3,
-            onTap: () {
-              RoutesUtils.changePage(AppRoutes.prayerRequestsList);
-            },
-          ),
-          SettingsListItem(
-            title: 'Dons',
-            subtitle: 'Reverend',
-            imageAsset: donsImage,
-            notificationCount: 9,
-            onTap: () {
-              RoutesUtils.changePage(AppRoutes.adminDonationsList);
-            },
-          ),
-          SettingsListItem(
-            title: 'Evenements',
-            subtitle: 'Admin',
-            imageAsset: evenementsImage,
-            onTap: () {
-              RoutesUtils.changePage(AppRoutes.evenements);
-            },
+          Obx(
+            () => FloatingBottomNav(
+              selectedIndex: homeUiController.tabIndex.value,
+              onItemTapped: (index) {
+                Get.back();
+                homeUiController.changeTabIndex(index);
+              },
+            ),
           ),
         ],
       ),

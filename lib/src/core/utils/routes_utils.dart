@@ -23,8 +23,8 @@ import '../../features/donations/ui/admin_donations_list_ui.dart'
 import '../../features/donations/ui/donations_list_ui.dart'
     show DonationsListUI;
 import '../../features/donations/ui/make_donation_ui.dart' show MakeDonationUI;
-import '../../features/evenement/presentation/ui/upsert_event_ui.dart'
-    show UpsertEventUI;
+import '../../features/events/events_list_ui.dart' show EventsListUI;
+import '../../features/events/upsert_event_ui.dart' show UpsertEventUI;
 import '../../features/home/ui/home_ui.dart' show HomeUI;
 import '../../features/launcher/ui/launcher_ui.dart' show LauncherUI;
 import '../../features/onboarding/ui/onboarding_ui.dart' show OnboardingUI;
@@ -41,12 +41,10 @@ import '../../features/prayer/ui/prayer_requests_list_ui.dart'
 import '../../features/rdv/ui/rdvs_ui.dart' show RdvsUI;
 import '../../features/reverend/ui/reverend_ui.dart' show ReverendUI;
 import '../../features/editeurs/ui/editeurs_ui.dart' show EditeursUI;
-import '../../features/evenement/presentation/ui/event_detail_page.dart';
 import '../../features/settings/presentation/ui/settings_page.dart';
 
 class AppRoutes {
   static const String settings = "/settings";
-  static const String eventDetail = "/eventDetail";
   static const String home = "/home";
   static const String notifications = "/notifications";
   static const String launcher = "/launcher";
@@ -54,6 +52,7 @@ class AppRoutes {
   static const String onboarding = "/onboarding";
   static const String addArticle = "/addArticle";
   static const String updateArticle = "/updateArticle";
+  static const String eventsList = "/eventsList";
   static const String upsertEvent = "/upsertEvent";
   static const String donationsList = "/donationsList";
   static const String adminDonationsList = "/adminDonationsList";
@@ -70,12 +69,13 @@ class AppRoutes {
 
   static const String requestRdv = "/requestRdv";
 
-  static const String evenements = "/evenements";
+  static const String eventsAndPrograms = "/eventsAndPrograms";
   static const String community = "/community";
 
   static const String login = "/login";
   static const String register = "/register";
   static const String resetPassword = "/resetPassword";
+  static const String splash = "/splash";
 }
 
 /// A map of the routes and their corresponding widgets.
@@ -141,6 +141,11 @@ List<GetPage<dynamic>> getPages = [
       transition: Transition.leftToRightWithFade,
       binding: AppBinding()),
   GetPage(
+      name: AppRoutes.eventsList,
+      page: () => const EventsListUI(),
+      transition: Transition.leftToRightWithFade,
+      binding: AppBinding()),
+  GetPage(
       name: AppRoutes.upsertEvent,
       page: () => const UpsertEventUI(),
       transition: Transition.leftToRightWithFade,
@@ -191,8 +196,8 @@ List<GetPage<dynamic>> getPages = [
       transition: Transition.leftToRightWithFade,
       binding: AppBinding()),
   GetPage(
-      name: AppRoutes.evenements,
-      page: () => const EvenementsPage(),
+      name: AppRoutes.eventsAndPrograms,
+      page: () => EvenementsPage(),
       transition: Transition.leftToRightWithFade,
       binding: AppBinding()),
   GetPage(
@@ -213,11 +218,6 @@ List<GetPage<dynamic>> getPages = [
   GetPage(
       name: AppRoutes.resetPassword,
       page: () => ResetPasswordUI(),
-      transition: Transition.leftToRightWithFade,
-      binding: AppBinding()),
-  GetPage(
-      name: AppRoutes.eventDetail,
-      page: () => const EventDetailPage(),
       transition: Transition.leftToRightWithFade,
       binding: AppBinding()),
   GetPage(

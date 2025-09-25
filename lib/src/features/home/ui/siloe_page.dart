@@ -8,7 +8,6 @@ import 'package:intl/intl.dart';
 import 'package:siloe/src/commons/extensions/glass_effect_extension.dart';
 import 'package:siloe/src/commons/extensions/scaffold_extension.dart';
 import 'package:siloe/src/core/utils/all_utils.dart';
-import 'package:siloe/src/features/evenement/domain/entities/entity_evenement.dart';
 import 'package:siloe/src/features/home/ui/widgets/new_top_bar_header.dart';
 import 'package:siloe/src/di/controllers_provider.dart';
 import 'package:siloe/src/features/evenement/presentation/adapters/evenement_ui_controller.dart';
@@ -26,8 +25,10 @@ class SiloePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Initialize controllers
     DiHelper.findOrCreate(creator: () => HomeUIController());
-    DiHelper.findOrCreate(creator: () => EvenementUIController()).initEvenements();
+    DiHelper.findOrCreate(creator: () => EvenementUIController())
+        .initEvenements();
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
@@ -40,7 +41,8 @@ class SiloePage extends StatelessWidget {
           SafeArea(
             child: Column(
               children: [
-                TopBarWidget().paddingSymmetric(
+                TopBarWidget()
+                    .paddingSymmetric(
                         horizontal: AppConstantsUtils.scaffoldHPadding)
                     .withGlassEffect(
                         blur: 15,
@@ -54,9 +56,13 @@ class SiloePage extends StatelessWidget {
                       bottom: AppConstantsUtils.scaffoldHPadding,
                     ),
                     children: const [
-                      _SectionHeader(title: 'ÉVÉNEMENTS ET PROGRAMME'),
+                      _SectionHeader(title: 'ÉVÉNEMENTS'),
                       SizedBox(height: 8),
                       _EventSlider(),
+                      SizedBox(height: 16),
+                      _SectionHeader(title: 'PROGRAMME DE LA SEMAINE'),
+                      SizedBox(height: 8),
+                      _ScheduleCard(),
                       SizedBox(height: 16),
                       _ServiceCard(),
                       SizedBox(height: 12),
@@ -140,9 +146,9 @@ class _EventSliderState extends State<_EventSlider> {
     super.initState();
     _controller = PageController(viewportFraction: 1);
     final evenementUiController = Get.find<EvenementUIController>();
-    // if (evenementUiController.evenements??.isNotEmpty) {
-    //   _startTimer(evenementUiController.evenements??.length);
-    // }
+    if (evenementUiController.evenements.isNotEmpty) {
+      _startTimer(evenementUiController.evenements.length);
+    }
     evenementUiController.evenements.listen((events) {
       if (events.isNotEmpty) {
         _startTimer(events.length);
@@ -187,12 +193,18 @@ class _EventSliderState extends State<_EventSlider> {
     final evenementUiController = Get.find<EvenementUIController>();
 
     return Obx(() {
-      // if (evenementUiController.evenements.isEmpty) {
-      //   return const SizedBox(
-      //     height: 200,
-      //     child: Center(child: Text("Aucun événement à venir.")),
-      //   );
-      // }
+      if (evenementUiController.isLoading.value) {
+        return const SizedBox(
+          height: 200,
+          child: Center(child: CircularProgressIndicator()),
+        );
+      }
+      if (evenementUiController.evenements.isEmpty) {
+        return const SizedBox(
+          height: 200,
+          child: Center(child: Text("Aucun événement à venir.")),
+        );
+      }
       return AspectRatio(
         aspectRatio: 16 / 9,
         child: PageView.builder(
@@ -287,14 +299,80 @@ class _EventSliderState extends State<_EventSlider> {
   }
 }
 
-extension on Rx<List<EntityEvenement>> {
-  bool? get isNotEmpty => null;
-  
-  int? get length => null;
-  
-  bool? get isEmpty => null;
+class _ScheduleCard extends StatelessWidget {
+  const _ScheduleCard();
 
-  operator [](int other) {}
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Text(
+                'Programme hebdomadaire',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.grey[800],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          _ScheduleRow('Lundi', '06h – 07h', 'Café chaud'),
+          _ScheduleRow('Mercredi', '19h – 21h', 'Étude Biblique'),
+          _ScheduleRow('Jeudi', '11h – 18h', 'Rencontre avec le Révérend'),
+          _ScheduleRow('Vendredi', '19h – 20h', 'Maisons d\'accueil'),
+          _ScheduleRow('Dimanche', '08h – 10h45', 'Culte de célébration'),
+        ],
+      ),
+    );
+  }
+}
+
+class _ScheduleRow extends StatelessWidget {
+  final String day;
+  final String time;
+  final String activity;
+
+  const _ScheduleRow(this.day, this.time, this.activity);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text.rich(
+            TextSpan(
+              children: [
+                TextSpan(
+                    text: '$day: ',
+                    style: const TextStyle(fontWeight: FontWeight.bold)),
+                TextSpan(text: activity),
+              ],
+            ),
+          ),
+          Text(time, style: const TextStyle(fontWeight: FontWeight.bold)),
+        ],
+      ),
+    );
+  }
 }
 
 class _ServiceCard extends StatelessWidget {

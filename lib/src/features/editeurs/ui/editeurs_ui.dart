@@ -5,6 +5,7 @@ import '../../../core/utils/app_constants_utils.dart' show AppConstantsUtils;
 import '../../home/ui/widgets/floatting_bottom_nav.dart' show FloatingBottomNav;
 import '../../../core/utils/routes_utils.dart' show RoutesUtils, AppRoutes;
 import '../presentation/adapters/editeurs_controller.dart' show EditeursController;
+import '../../home/adapters/home_ui_controller.dart';
 import '../data/models/editeur_model.dart' show EditeurModel;
 import '../bindings/editeurs_binding.dart' show EditeursBinding;
 import '../../../core/api/api_resources.dart' show ApiResources;
@@ -244,12 +245,16 @@ class EditeursUI extends StatelessWidget {
               ),
             ],
           ),
-          FloatingBottomNav(
-            selectedIndex: 1,
-            onItemTapped: (i) {
-              if (i == 0) {
-                RoutesUtils.changePage(AppRoutes.home);
-              }
+          Obx(
+            () {
+              final homeUiController = Get.find<HomeUIController>();
+              return FloatingBottomNav(
+                selectedIndex: homeUiController.tabIndex.value,
+                onItemTapped: (index) {
+                  Get.back();
+                  homeUiController.changeTabIndex(index);
+                },
+              );
             },
           ),
         ],

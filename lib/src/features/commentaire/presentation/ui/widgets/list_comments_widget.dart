@@ -19,41 +19,45 @@ class ListCommentsWidget extends StatelessWidget {
     final commentUiController =
         DiHelper.findOrCreate(creator: () => CommentaireUIController())
           ..initComments(publicationId: publication.id!);
-
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Obx(() => Text(
-                "${commentUiController.comments.value.length} COMMENTAIRE(S)",
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
-                ),
-              )),
-          const SizedBox(height: 8),
-          const Divider(),
-          Obx(() {
-            if (commentUiController.isLoading.value) {
-              return const Center(child: CircularProgressIndicator());
-            }
-            if (commentUiController.comments.value.isEmpty) {
-              return const Center(
+      child: Obx(() {
+        if (commentUiController.isLoading.value) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "${commentUiController.comments.value.length} COMMENTAIRE(S)",
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 14,
+              ),
+            ),
+            const SizedBox(height: 8),
+            const Divider(),
+            if (commentUiController.comments.value.isEmpty)
+              const Center(
                 child: Padding(
                   padding: EdgeInsets.symmetric(vertical: 24.0),
                   child: Text("Aucun commentaire pour le moment."),
                 ),
-              );
-            }
-            return Column(
-              children: commentUiController.comments.value
-                  .map((comment) => CommentItemWidget(comment: comment))
-                  .toList(),
-            );
-          }),
-        ],
-      ),
+              )
+            else
+              ListView.separated(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: commentUiController.comments.value.length,
+                itemBuilder: (context, index) {
+                  final comment = commentUiController.comments.value[index];
+                  return CommentItemWidget(comment: comment);
+                },
+                separatorBuilder: (context, index) => const Divider(),
+              ),
+          ],
+        );
+      }),
     );
   }
 }
