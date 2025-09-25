@@ -33,4 +33,6 @@ class EntityEvenement extends Equatable {
     statut,
     utilisateurId
   ];
+
+  get sousTitre => null;
 }

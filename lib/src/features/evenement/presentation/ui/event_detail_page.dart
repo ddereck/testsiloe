@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:get/get.dart';
-import 'package:siloe/src/features/evenement/domain/entities/evenement.dart';
+import 'package:siloe/src/features/evenement/domain/entities/entity_evenement.dart';
 import 'package:siloe/src/utils/image_utils.dart';
 import 'package:intl/intl.dart';
 
@@ -88,4 +88,16 @@ class EventDetailPage extends StatelessWidget {
       ),
     );
   }
+}
+
+class Evenement {
+  get texteArticle => null;
+  
+  get sousTitre => null;
+  
+  String? get dateEvenement => null;
+  
+  String? get imageDeCouverture => null;
+  
+  get theme => null;
 }

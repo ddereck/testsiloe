@@ -59,15 +59,15 @@ class UpsertEventUIController extends GetxController {
     };
 
     if (currentEvent.value?.id != null) {
-      newValue = await ControllersProvider.EVENEMENT_CONTROLLER.updateEvenement(
-        id: currentEvent.value!.id!,
-        ...eventData,
-      );
+      // newValue = await ControllersProvider.EVENEMENT_CONTROLLER.updateEvenement(
+      //   id: currentEvent.value!.id!
+      //   ...eventData,
+      // );
     } else {
-      newValue =
-          await ControllersProvider.EVENEMENT_CONTROLLER.createEvenement(
-        ...eventData,
-      );
+      // newValue =
+      //     await ControllersProvider.EVENEMENT_CONTROLLER.createEvenement(
+      //   ...eventData,
+      // );
     }
 
     isSubmitting.value = false;

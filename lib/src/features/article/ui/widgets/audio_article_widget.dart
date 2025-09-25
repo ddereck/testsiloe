@@ -136,7 +136,7 @@ class AudioArticleWidget extends StatelessWidget {
                 ),
                 const SizedBox(height: 24),
                 Text(
-                  publication.sousTitre ?? '',
+                  publication.description ?? '',
                   style: TextStyle(fontSize: 16, color: Colors.grey[800]),
                 ),
               ],

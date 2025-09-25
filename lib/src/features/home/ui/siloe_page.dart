@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:siloe/src/commons/extensions/glass_effect_extension.dart';
 import 'package:siloe/src/commons/extensions/scaffold_extension.dart';
 import 'package:siloe/src/core/utils/all_utils.dart';
+import 'package:siloe/src/features/evenement/domain/entities/entity_evenement.dart';
 import 'package:siloe/src/features/home/ui/widgets/new_top_bar_header.dart';
 import 'package:siloe/src/di/controllers_provider.dart';
 import 'package:siloe/src/features/evenement/presentation/adapters/evenement_ui_controller.dart';
@@ -139,9 +140,9 @@ class _EventSliderState extends State<_EventSlider> {
     super.initState();
     _controller = PageController(viewportFraction: 1);
     final evenementUiController = Get.find<EvenementUIController>();
-    if (evenementUiController.evenements.isNotEmpty) {
-      _startTimer(evenementUiController.evenements.length);
-    }
+    // if (evenementUiController.evenements??.isNotEmpty) {
+    //   _startTimer(evenementUiController.evenements??.length);
+    // }
     evenementUiController.evenements.listen((events) {
       if (events.isNotEmpty) {
         _startTimer(events.length);
@@ -186,12 +187,12 @@ class _EventSliderState extends State<_EventSlider> {
     final evenementUiController = Get.find<EvenementUIController>();
 
     return Obx(() {
-      if (evenementUiController.evenements.isEmpty) {
-        return const SizedBox(
-          height: 200,
-          child: Center(child: Text("Aucun événement à venir.")),
-        );
-      }
+      // if (evenementUiController.evenements.isEmpty) {
+      //   return const SizedBox(
+      //     height: 200,
+      //     child: Center(child: Text("Aucun événement à venir.")),
+      //   );
+      // }
       return AspectRatio(
         aspectRatio: 16 / 9,
         child: PageView.builder(
@@ -284,6 +285,16 @@ class _EventSliderState extends State<_EventSlider> {
       );
     });
   }
+}
+
+extension on Rx<List<EntityEvenement>> {
+  bool? get isNotEmpty => null;
+  
+  int? get length => null;
+  
+  bool? get isEmpty => null;
+
+  operator [](int other) {}
 }
 
 class _ServiceCard extends StatelessWidget {

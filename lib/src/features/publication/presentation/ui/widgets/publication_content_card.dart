@@ -57,9 +57,9 @@ class _PublicationContentCardState extends State<PublicationContentCard> {
 
   IconData _getIconForType(ContentType? type) {
     switch (type) {
-      case ContentType.verset:
+      case ContentType.text:
         return TablerIcons.book;
-      case ContentType.temoignage:
+      case ContentType.video:
         return TablerIcons.cross;
       default:
         return TablerIcons.article;
@@ -149,13 +149,13 @@ class _PublicationContentCardState extends State<PublicationContentCard> {
               ),
             ),
           ),
-          if (widget.publication.sousTitre != null &&
-              widget.publication.sousTitre!.isNotEmpty)
+          if (widget.publication.description != null &&
+              widget.publication.description!.isNotEmpty)
             Padding(
               padding:
                   const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
               child: Text(
-                widget.publication.sousTitre!,
+                widget.publication.description!,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(fontSize: 14, color: Colors.grey[800]),

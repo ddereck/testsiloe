@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:siloe/src/core/utils/routes_utils.dart';
+import 'package:siloe/src/features/evenement/domain/entities/entity_evenement.dart';
 import '../../../../commons/ui/widgets/custom_app_bar.dart';
 import '../../../../di/di_helper.dart' show DiHelper;
 import '../adapters/evenement_ui_controller.dart';
@@ -55,4 +56,6 @@ class EvenementsPage extends StatelessWidget {
       ),
     );
   }
+
+  EventCard({required EntityEvenement event}) {}
 }

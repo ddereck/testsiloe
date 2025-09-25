@@ -39,6 +39,8 @@ class CommentaireUIController extends GetxController {
   }
 
   Rx<bool> isSubmitting = false.obs;
+
+  get isLoading => null;
   Future<void> onSubmitComment({required int publicationId}) async {
     if (commentController.text.isEmpty) {
       commentFocusNode.unfocus();
