@@ -1,15 +1,24 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:intl/intl.dart';
+
 import 'package:siloe/src/commons/extensions/glass_effect_extension.dart';
 import 'package:siloe/src/commons/extensions/scaffold_extension.dart';
 import 'package:siloe/src/core/utils/all_utils.dart';
 import 'package:siloe/src/features/home/ui/widgets/new_top_bar_header.dart';
+import 'package:siloe/src/di/controllers_provider.dart';
+import 'package:siloe/src/features/evenement/presentation/adapters/evenement_ui_controller.dart';
+import 'package:siloe/src/features/evenement/presentation/data/event_datas.dart';
+import 'package:siloe/src/features/user/domain/enums/user_role_enums.dart';
+import 'package:siloe/src/utils/image_utils.dart';
+
 import '../../../core/utils/app_constants_utils.dart' show AppConstantsUtils;
 import '../../../core/utils/routes_utils.dart' show RoutesUtils, AppRoutes;
 import '../../../di/di_helper.dart' show DiHelper;
 import '../adapters/home_ui_controller.dart' show HomeUIController;
-import 'dart:async';
 
 class SiloePage extends StatelessWidget {
   const SiloePage({super.key});
@@ -17,6 +26,7 @@ class SiloePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     DiHelper.findOrCreate(creator: () => HomeUIController());
+    DiHelper.findOrCreate(creator: () => EvenementUIController()).initEvenements();
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
@@ -26,12 +36,6 @@ class SiloePage extends StatelessWidget {
       ),
       child: Stack(
         children: [
-          // Positioned.fill(
-          //   child: Image.asset(
-          //     'assets/images/background_siloe.jpg',
-          //     fit: BoxFit.cover,
-          //   ),
-          // ),
           SafeArea(
             child: Column(
               children: [
@@ -51,10 +55,8 @@ class SiloePage extends StatelessWidget {
                     children: const [
                       _SectionHeader(title: 'ÉVÉNEMENTS ET PROGRAMME'),
                       SizedBox(height: 8),
-                      _BannerSlider(),
-                      // SizedBox(height: 16),
-                      // _SectionHeader(title: 'Evenement et programmes'),
-                      SizedBox(height: 8),
+                      _EventSlider(),
+                      SizedBox(height: 16),
                       _ServiceCard(),
                       SizedBox(height: 12),
                       _InfoCard(),
@@ -67,7 +69,6 @@ class SiloePage extends StatelessWidget {
               ],
             ),
           ),
-          // Couverture complète de la barre de statut avec la couleur thème
           Positioned(
             top: 0,
             left: 0,
@@ -77,7 +78,6 @@ class SiloePage extends StatelessWidget {
               return Container(height: top, color: const Color(0xFF7A0C0C));
             }),
           ),
-          // Floating WhatsApp button
           Positioned(
             right: AppConstantsUtils.scaffoldHPadding,
             bottom: AppConstantsUtils.scaffoldHPadding,
@@ -124,42 +124,40 @@ class _SectionHeader extends StatelessWidget {
   }
 }
 
-class _BannerSlider extends StatefulWidget {
-  const _BannerSlider();
+class _EventSlider extends StatefulWidget {
+  const _EventSlider();
   @override
-  State<_BannerSlider> createState() => _BannerSliderState();
+  State<_EventSlider> createState() => _EventSliderState();
 }
 
-class _BannerSliderState extends State<_BannerSlider> {
-  final PageController _controller = PageController(viewportFraction: 1);
-  int _index = 0;
+class _EventSliderState extends State<_EventSlider> {
+  late PageController _controller;
   Timer? _timer;
-  final List<_BannerData> _banners = const [
-    _BannerData(
-      image: 'assets/images/image1.png',
-      title: "Campagne d'evangelisation",
-      subtitle: 'Du 10 au 30 Août 2025',
-    ),
-    _BannerData(
-      image: 'assets/images/image2.png',
-      title: 'Nuit de délivrance',
-      subtitle: '26/09/25 de 22h à 05h',
-    ),
-    _BannerData(
-      image: 'assets/images/image1.png',
-      title: "Campagne de Paques",
-      subtitle: 'Du 10 au 30 Août 2025',
-    ),
-  ];
 
   @override
   void initState() {
     super.initState();
+    _controller = PageController(viewportFraction: 1);
+    final evenementUiController = Get.find<EvenementUIController>();
+    if (evenementUiController.evenements.isNotEmpty) {
+      _startTimer(evenementUiController.evenements.length);
+    }
+    evenementUiController.evenements.listen((events) {
+      if (events.isNotEmpty) {
+        _startTimer(events.length);
+      } else {
+        _timer?.cancel();
+      }
+    });
+  }
+
+  void _startTimer(int pageCount) {
+    _timer?.cancel();
     _timer = Timer.periodic(const Duration(seconds: 5), (t) {
-      if (!mounted) return;
-      final next = (_index + 1) % _banners.length;
+      if (!mounted || pageCount == 0 || !_controller.hasClients) return;
+      final nextPage = (_controller.page!.toInt() + 1) % pageCount;
       _controller.animateToPage(
-        next,
+        nextPage,
         duration: const Duration(milliseconds: 400),
         curve: Curves.easeInOut,
       );
@@ -173,153 +171,119 @@ class _BannerSliderState extends State<_BannerSlider> {
     super.dispose();
   }
 
+  String _formatDate(String? dateStr) {
+    if (dateStr == null) return '';
+    try {
+      final date = DateTime.parse(dateStr);
+      return DateFormat('dd MMMM yyyy', 'fr_FR').format(date);
+    } catch (e) {
+      return '';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        ClipRRect(
-          borderRadius: BorderRadius.circular(12),
-          child: Stack(
-            children: [
-              AspectRatio(
-                aspectRatio: 16 / 9,
-                child: PageView.builder(
-                  controller: _controller,
-                  itemCount: _banners.length,
-                  onPageChanged: (i) => setState(() => _index = i),
-                  itemBuilder: (_, i) {
-                    final b = _banners[i];
-                    return Stack(
-                      fit: StackFit.expand,
-                      children: [
-                        Image.asset(b.image, fit: BoxFit.cover),
-                        // Title and subtitle overlay
-                        Positioned(
-                          bottom: 10,
-                          right: 14,
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                            decoration: BoxDecoration(
-                              color: Colors.black.withValues(alpha: 0.4), // fond semi-transparent
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  b.title,
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 13,
-                                  ),
-                                ),
-                                const SizedBox(height: 2),
-                                Text(
-                                  b.subtitle,
-                                  style: const TextStyle(
-                                    color: Colors.white70,
-                                    fontSize: 11,
-                                  ),
-                                ),
-                              ],
+    final evenementUiController = Get.find<EvenementUIController>();
+
+    return Obx(() {
+      if (evenementUiController.evenements.isEmpty) {
+        return const SizedBox(
+          height: 200,
+          child: Center(child: Text("Aucun événement à venir.")),
+        );
+      }
+      return AspectRatio(
+        aspectRatio: 16 / 9,
+        child: PageView.builder(
+          controller: _controller,
+          itemCount: evenementUiController.evenements.length,
+          itemBuilder: (_, i) {
+            final event = evenementUiController.evenements[i];
+            return GestureDetector(
+              onTap: () {
+                Get.toNamed(AppRoutes.eventDetail, arguments: event);
+              },
+              child: Card(
+                clipBehavior: Clip.antiAlias,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    if (event.imageDeCouverture != null)
+                      CachedNetworkImage(
+                        imageUrl:
+                            ImageUtils.buildImageUrl(event.imageDeCouverture!),
+                        fit: BoxFit.cover,
+                      ),
+                    Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            Colors.black.withOpacity(0.7),
+                            Colors.transparent
+                          ],
+                          begin: Alignment.bottomCenter,
+                          end: Alignment.topCenter,
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      bottom: 10,
+                      left: 14,
+                      right: 14,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            event.theme ?? '',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
                             ),
                           ),
-                        ),
-                      ],
-                    );
-                  },
+                          const SizedBox(height: 4),
+                          Text(
+                            _formatDate(event.dateEvenement),
+                            style: const TextStyle(
+                              color: Colors.white70,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Obx(() {
+                      final user =
+                          ControllersProvider.USER_CONTROLLER.user.value;
+                      if (user != null &&
+                          user.roles.any(
+                              (role) => role.toUserRole().isAdminOrReverend)) {
+                        return Positioned(
+                          top: 8,
+                          right: 8,
+                          child: IconButton(
+                            icon: const Icon(Icons.edit, color: Colors.white),
+                            onPressed: () {
+                              Get.toNamed(AppRoutes.upsertEvent,
+                                  arguments: {EventDatas.evenementArg: event});
+                            },
+                          ),
+                        );
+                      }
+                      return const SizedBox.shrink();
+                    })
+                  ],
                 ),
               ),
-            ],
-          ),
+            );
+          },
         ),
-                        // Programme de culte card
-                        Positioned(
-                          left: 8,
-                          right: 8,
-                          bottom: 8,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(10),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withValues(alpha: 0.15),
-                                  blurRadius: 12,
-                                  offset: const Offset(0, 4),
-                                ),
-                              ],
-                            ),
-                            padding: const EdgeInsets.fromLTRB(10, 8, 10, 10),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 8, vertical: 2),
-                                  decoration: BoxDecoration(
-                                    color: Colors.grey.shade300,
-                                    borderRadius: BorderRadius.circular(14),
-                                  ),
-                                  child: const Text(
-                                    'Programme hebdomadaire',
-                                    style: TextStyle(
-                                        fontSize: 11,
-                                        fontWeight: FontWeight.w700,
-                                        color: Colors.black87),
-                                  ),
-                                ),
-                                const SizedBox(height: 6),
-                                Row(
-                                  children: const [
-                                    Expanded(child: _ScheduleColumn()),
-                                    SizedBox(width: 16),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-        const SizedBox(height: 8),
-      ],
-    );
+      );
+    });
   }
-}
-
-class _ScheduleColumn extends StatelessWidget {
-  const _ScheduleColumn();
-  @override
-  Widget build(BuildContext context) {
-    Text _row(String day, String hour, String gram) => Text.rich(
-          TextSpan(children: [
-            TextSpan(text: '$day  ', style: const TextStyle(fontSize: 10)),
-            TextSpan(
-                text: hour,
-                style:
-                    const TextStyle(fontSize: 11, fontWeight: FontWeight.w700)),
-            TextSpan(text: '$gram  ', style: const TextStyle(fontSize: 10)),
-          ]),
-        );
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _row('Lundi', '06h – 07h' ,': Café chaud'),
-        _row('Mercredi', '19h – 21h' ,': Étude Biblique'),
-        _row('Jeudi', '11h – 18h' ,': Rencontre avec le Révérend'),
-        _row('Vendredi', '19h – 20h' ,': Maisons d\'accueil'),
-        _row('Dimanche', '08h – 10h45' ,': Culte de célébration'),
-      ],
-    );
-  }
-}
-
-class _BannerData {
-  final String image;
-  final String title;
-  final String subtitle;
-  const _BannerData(
-      {required this.image, required this.title, required this.subtitle});
 }
 
 class _ServiceCard extends StatelessWidget {
@@ -332,7 +296,7 @@ class _ServiceCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.08),
+            color: Colors.black.withOpacity(0.08),
             blurRadius: 8,
             offset: const Offset(0, 3),
           ),
@@ -404,7 +368,7 @@ class _InfoCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.08),
+            color: Colors.black.withOpacity(0.08),
             blurRadius: 8,
             offset: const Offset(0, 3),
           ),
@@ -470,7 +434,7 @@ class _DonationCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.08),
+            color: Colors.black.withOpacity(0.08),
             blurRadius: 8,
             offset: const Offset(0, 3),
           ),

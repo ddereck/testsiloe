@@ -5,15 +5,20 @@ import 'package:siloe/src/di/controllers_provider.dart';
 import '../../domain/entities/entity_evenement.dart' show EntityEvenement;
 
 class EvenementUIController extends GetxController {
+  final isLoading = false.obs;
   Rx<List<EntityEvenement>> evenements = Rx<List<EntityEvenement>>([]);
+
   void setEvenements(List<EntityEvenement> evenements) {
     this.evenements.value = evenements;
     update();
   }
 
   Future<void> initEvenements() async {
-    final result = await ControllersProvider.EVENEMENT_CONTROLLER.getAllEvenements();
+    isLoading.value = true;
+    final result =
+        await ControllersProvider.EVENEMENT_CONTROLLER.getAllEvenements();
     setEvenements(result);
+    isLoading.value = false;
   }
 
   Future<void> onRefresh() async => await initEvenements();

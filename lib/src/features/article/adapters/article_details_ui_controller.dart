@@ -214,6 +214,10 @@ Future<String?> _resolvePcloudAudioUrl(String rawUrl) async {
     audioPlayer.setVolume(newVolume > 1.0 ? 1.0 : newVolume);
   }
 
+  void setVolume(double volume) {
+    audioPlayer.setVolume(volume);
+  }
+
   void initAudio() async {
     if (currentContentType.value != ContentType.audio) return;
     final rawUrl = getAudioFileUrl();
