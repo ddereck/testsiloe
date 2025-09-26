@@ -41,10 +41,8 @@ import '../../features/prayer/ui/prayer_requests_list_ui.dart'
 import '../../features/rdv/ui/rdvs_ui.dart' show RdvsUI;
 import '../../features/reverend/ui/reverend_ui.dart' show ReverendUI;
 import '../../features/editeurs/ui/editeurs_ui.dart' show EditeursUI;
-import '../../features/settings/presentation/ui/settings_page.dart';
 
 class AppRoutes {
-  static const String settings = "/settings";
   static const String home = "/home";
   static const String notifications = "/notifications";
   static const String launcher = "/launcher";
@@ -218,11 +216,6 @@ List<GetPage<dynamic>> getPages = [
   GetPage(
       name: AppRoutes.resetPassword,
       page: () => ResetPasswordUI(),
-      transition: Transition.leftToRightWithFade,
-      binding: AppBinding()),
-  GetPage(
-      name: AppRoutes.settings,
-      page: () => const SettingsPage(),
       transition: Transition.leftToRightWithFade,
       binding: AppBinding()),
 ];

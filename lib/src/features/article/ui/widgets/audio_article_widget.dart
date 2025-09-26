@@ -124,7 +124,23 @@ class AudioArticleWidget extends StatelessWidget {
             IconButton(
               icon: const Icon(TablerIcons.volume, color: Colors.red),
               onPressed: () {
-                // TODO: Implement volume control
+                showModalBottomSheet(
+                  context: context,
+                  builder: (context) {
+                    return StreamBuilder<double>(
+                      stream: controller.audioPlayer.volumeStream,
+                      builder: (context, snapshot) {
+                        final volume = snapshot.data ?? 0.5;
+                        return Slider(
+                          value: volume,
+                          min: 0.0,
+                          max: 1.0,
+                          onChanged: controller.audioPlayer.setVolume,
+                        );
+                      },
+                    );
+                  },
+                );
               },
             ),
             IconButton(

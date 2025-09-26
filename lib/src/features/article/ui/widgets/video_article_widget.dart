@@ -125,9 +125,9 @@ class _VideoArticleWidgetState extends State<VideoArticleWidget> {
                   ],
                 ),
                 const SizedBox(height: 8),
-                if (widget.publication.description != null)
+                if (widget.publication.sousTitre != null)
                   Text(
-                    widget.publication.description!,
+                    widget.publication.sousTitre!,
                     style: TextStyle(
                       fontSize: 14,
                       color: Colors.grey[700],

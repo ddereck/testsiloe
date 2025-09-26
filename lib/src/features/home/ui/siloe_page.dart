@@ -41,7 +41,7 @@ class SiloePage extends StatelessWidget {
           SafeArea(
             child: Column(
               children: [
-                TopBarWidget()
+                TopbarWidget()
                     .paddingSymmetric(
                         horizontal: AppConstantsUtils.scaffoldHPadding)
                     .withGlassEffect(
@@ -146,8 +146,8 @@ class _EventSliderState extends State<_EventSlider> {
     super.initState();
     _controller = PageController(viewportFraction: 1);
     final evenementUiController = Get.find<EvenementUIController>();
-    if (evenementUiController.evenements.value.isNotEmpty) {
-      _startTimer(evenementUiController.evenements.value.length);
+    if (evenementUiController.evenements.isNotEmpty) {
+      _startTimer(evenementUiController.evenements.length);
     }
     evenementUiController.evenements.listen((events) {
       if (events.isNotEmpty) {
@@ -162,7 +162,7 @@ class _EventSliderState extends State<_EventSlider> {
     _timer?.cancel();
     _timer = Timer.periodic(const Duration(seconds: 5), (t) {
       if (!mounted || pageCount == 0 || !_controller.hasClients) return;
-      final nextPage = (_controller.page!.toInt() + 1) % pageCount;
+      final nextPage = (_controller.page?.toInt() ?? 0 + 1) % pageCount;
       _controller.animateToPage(
         nextPage,
         duration: const Duration(milliseconds: 400),
@@ -199,7 +199,7 @@ class _EventSliderState extends State<_EventSlider> {
           child: Center(child: CircularProgressIndicator()),
         );
       }
-      if (evenementUiController.evenements.value.isEmpty) {
+      if (evenementUiController.evenements.isEmpty) {
         return const SizedBox(
           height: 200,
           child: Center(child: Text("Aucun événement à venir.")),
@@ -209,12 +209,12 @@ class _EventSliderState extends State<_EventSlider> {
         aspectRatio: 16 / 9,
         child: PageView.builder(
           controller: _controller,
-          itemCount: evenementUiController.evenements.value.length,
+          itemCount: evenementUiController.evenements.length,
           itemBuilder: (_, i) {
-            final event = evenementUiController.evenements.value[i];
+            final event = evenementUiController.evenements[i];
             return GestureDetector(
               onTap: () {
-                Get.toNamed(AppRoutes.eventsAndPrograms, arguments: event);
+                Get.toNamed(AppRoutes.eventDetail, arguments: event);
               },
               child: Card(
                 clipBehavior: Clip.antiAlias,

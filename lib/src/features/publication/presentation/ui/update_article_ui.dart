@@ -10,7 +10,6 @@ import '../../../../commons/ui/widgets/topbar_widget.dart' show TopbarWidget;
 import '../../../../core/utils/app_constants_utils.dart' show AppConstantsUtils;
 import '../../../../di/di_helper.dart' show DiHelper;
 import '../../../../utils/field_formatter.dart' show FieldFormatter;
-import '../../../../utils/text_config.dart' show TextConfig;
 import '../../../article/adapters/upsert_article_ui_controller.dart'
     show UpsertArticleUIController;
 import '../../../categorie/domain/entities/entity_categorie.dart'
