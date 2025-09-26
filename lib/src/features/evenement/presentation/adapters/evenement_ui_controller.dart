@@ -6,6 +6,8 @@ import '../../domain/entities/entity_evenement.dart' show EntityEvenement;
 
 class EvenementUIController extends GetxController {
   Rx<List<EntityEvenement>> evenements = Rx<List<EntityEvenement>>([]);
+  final RxBool isLoading = false.obs;
+
   void setEvenements(List<EntityEvenement> evenements) {
     this.evenements.value = evenements;
     update();

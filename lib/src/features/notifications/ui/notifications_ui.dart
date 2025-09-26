@@ -16,7 +16,7 @@ class NotificationsUI extends StatelessWidget {
   Widget build(BuildContext context) {
     final user = ControllersProvider.USER_CONTROLLER.user.value;
     final isReverend =
-        user?.roles.any((role) => role.toUserRole() == UserRole.reverend) ??
+        user?.roles.any((role) => role.toUserRole() == UserRoleEnums.reverend) ??
             false;
 
     // Static data for demonstration purposes
