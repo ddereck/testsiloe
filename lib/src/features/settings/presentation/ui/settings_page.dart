@@ -26,7 +26,7 @@ class SettingsPage extends StatelessWidget {
             children: [
               SettingsListItem(
                 title: 'Editeur de la communauté',
-                imageAsset: 'assets/images/reverend.png',
+                imageAsset: 'assets/images/editors.jpeg',
                 onTap: () {
                   RoutesUtils.changePage(AppRoutes.editeurs);
                 },
@@ -34,7 +34,7 @@ class SettingsPage extends StatelessWidget {
               SettingsListItem(
                 title: 'Les demandes de rencontres',
                 subtitle: 'Reverend',
-                imageAsset: 'assets/images/events.png',
+                imageAsset: 'assets/images/rdvs.png',
                 notificationCount: demandeRencontresCount,
                 onTap: () {
                   RoutesUtils.changePage(AppRoutes.rdvs);
@@ -43,7 +43,7 @@ class SettingsPage extends StatelessWidget {
               SettingsListItem(
                 title: 'Requêtes de prière',
                 subtitle: 'Reverend',
-                imageAsset: 'assets/images/priere.png',
+                imageAsset: 'assets/images/makerequest.jpeg',
                 notificationCount: requetesPriereCount,
                 onTap: () {
                   RoutesUtils.changePage(AppRoutes.prayerRequestsList);
@@ -52,7 +52,7 @@ class SettingsPage extends StatelessWidget {
               SettingsListItem(
                 title: 'Dons',
                 subtitle: 'Reverend',
-                imageAsset: 'assets/images/don.png',
+                imageAsset: 'assets/images/dons.jpeg',
                 notificationCount: donsCount,
                 onTap: () {
                   RoutesUtils.changePage(AppRoutes.adminDonationsList);
@@ -61,7 +61,7 @@ class SettingsPage extends StatelessWidget {
               SettingsListItem(
                 title: 'Evenements',
                 subtitle: 'Admin',
-                imageAsset: 'assets/images/events.png',
+                imageAsset: 'assets/images/event.jpeg',
                 onTap: () {
                   RoutesUtils.changePage(AppRoutes.eventsAndPrograms);
                 },

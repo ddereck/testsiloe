@@ -56,11 +56,9 @@ class SiloePage extends StatelessWidget {
                       bottom: AppConstantsUtils.scaffoldHPadding,
                     ),
                     children: const [
-                      _SectionHeader(title: 'ÉVÉNEMENTS'),
+                      _SectionHeader(title: 'ÉVÉNEMENTS ET PROGRAMMES'),
                       SizedBox(height: 8),
                       _EventSlider(),
-                      SizedBox(height: 16),
-                      _SectionHeader(title: 'PROGRAMME DE LA SEMAINE'),
                       SizedBox(height: 8),
                       _ScheduleCard(),
                       SizedBox(height: 16),
@@ -395,10 +393,22 @@ class _ServiceCard extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Row(
+            children: [
+              Text(
+                'Rencontrer le Révérend',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.black.withOpacity(0.08),
+                ),
+              ),
+            ],
+          ),
           ClipRRect(
             borderRadius: BorderRadius.circular(8),
             child: Image.asset(
-              'assets/images/reverend.png',
+              'assets/images/makerdv.png',
               width: 120,
               height: 120,
               fit: BoxFit.cover,
@@ -467,6 +477,14 @@ class _InfoCard extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+              Text(
+                'Cellule d\'intercession',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.black.withOpacity(0.08),
+                ),
+              ),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -501,7 +519,7 @@ class _InfoCard extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(8),
             child: Image.asset(
-              'assets/images/image2.png',
+              'assets/images/makerequest.jpeg',
               width: 120,
               height: 110,
               fit: BoxFit.cover,
@@ -529,31 +547,64 @@ class _DonationCard extends StatelessWidget {
           ),
         ],
       ),
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(8),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-            child: Text(
-              "Votre générosité permet à notre communauté de répandre la bonne nouvelle, de partager l'amour de Dieu et d'apporter aide et réconfort à ceux qui sont dans le besoin.",
-              style: const TextStyle(fontSize: 12),
+              Text(
+                'Apporter sa part',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.black.withOpacity(0.08),
+                ),
+              ),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: Image.asset(
+              'assets/images/makedon.jpeg',
+              width: 120,
+              height: 120,
+              fit: BoxFit.cover,
             ),
           ),
           const SizedBox(width: 12),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF7A0C0C),
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(6),
-              ),
-              elevation: 0,
-            ),
-            onPressed: () => RoutesUtils.changePage(AppRoutes.sendDonation),
-            child: const Text(
-              'Faire un don',
-              style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade200,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  padding: const EdgeInsets.all(8),
+                  child: const Text(
+                    "Votre générosité permet à notre communauté de répandre la bonne nouvelle, de partager l'amour de Dieu et d'apporter aide et réconfort à ceux qui sont dans le besoin.",
+                    style: const TextStyle(fontSize: 12),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF7A0C0C),
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 10),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    onPressed: () => RoutesUtils.changePage(AppRoutes.sendDonation),
+                    child: const Text(
+                      'Faire un don',
+                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ],
