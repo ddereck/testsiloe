@@ -6,7 +6,6 @@ import 'package:siloe/src/features/home/ui/widgets/floatting_bottom_nav.dart';
 import '../../../commons/ui/widgets/topbar_widget.dart';
 
 import '../../../core/enums/content_type.dart' show ContentType;
-import '../../../core/utils/app_constants_utils.dart' show AppConstantsUtils;
 import '../../../di/di_helper.dart' show DiHelper;
 import '../../authentication/presentation/adapters/auth_ui_controller.dart'
     show AuthUIController;
@@ -35,7 +34,8 @@ class ArticleDetailsUI extends StatelessWidget {
           ..initArticleByArgs();
     final commentUiController =
         DiHelper.findOrCreate(creator: () => CommentaireUIController());
-    final homeUiController = DiHelper.findOrCreate(creator: () => HomeUIController());
+    final homeUiController =
+        DiHelper.findOrCreate(creator: () => HomeUIController());
 
     return PopScope(
       onPopInvokedWithResult: (didPop, _) {
@@ -74,17 +74,15 @@ class ArticleDetailsUI extends StatelessWidget {
                               AudioArticleWidget(publication: article),
                             ],
                             // Commentaire
-                            if (contentType != ContentType.text) ...[
-                              Obx(() {
-                                if (authUiController.isCurrentlyLogin.value) {
-                                  return AddCommentFormWidget(
-                                    publication: article,
-                                  );
-                                }
-                                return const SizedBox.shrink();
-                              }),
-                              ListCommentsWidget(publication: article),
-                            ],
+                            Obx(() {
+                              if (authUiController.isCurrentlyLogin.value) {
+                                return AddCommentFormWidget(
+                                  publication: article,
+                                );
+                              }
+                              return const SizedBox.shrink();
+                            }),
+                            ListCommentsWidget(publication: article),
                           ],
                         ),
                       );
@@ -93,7 +91,7 @@ class ArticleDetailsUI extends StatelessWidget {
                 ),
               ],
             ),
-             Obx(
+            Obx(
               () => FloatingBottomNav(
                 selectedIndex: homeUiController.tabIndex.value,
                 onItemTapped: (index) {

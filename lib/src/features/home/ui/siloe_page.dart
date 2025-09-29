@@ -160,7 +160,7 @@ class _EventSliderState extends State<_EventSlider> {
     _timer?.cancel();
     _timer = Timer.periodic(const Duration(seconds: 5), (t) {
       if (!mounted || pageCount == 0 || !_controller.hasClients) return;
-      final nextPage = (_controller.page!.toInt() + 1) % pageCount;
+      final nextPage = (_controller.page?.toInt() ?? 0 + 1) % pageCount;
       _controller.animateToPage(
         nextPage,
         duration: const Duration(milliseconds: 400),
@@ -377,7 +377,21 @@ class _ServiceCard extends StatelessWidget {
   const _ServiceCard();
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Padding(
+          padding: EdgeInsets.only(bottom: 4),
+          child: Text(
+            'Rencontrer le Révérend',
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.bold,
+              color: Color.fromARGB(255, 2, 2, 2),
+            ),
+          ),
+        ),
+      Container(
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
@@ -393,18 +407,6 @@ class _ServiceCard extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Text(
-                'Rencontrer le Révérend',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.black.withOpacity(0.08),
-                ),
-              ),
-            ],
-          ),
           ClipRRect(
             borderRadius: BorderRadius.circular(8),
             child: Image.asset(
@@ -453,6 +455,8 @@ class _ServiceCard extends StatelessWidget {
           ),
         ],
       ),
+    ),
+      ],
     );
   }
 }
@@ -461,7 +465,21 @@ class _InfoCard extends StatelessWidget {
   const _InfoCard();
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Padding(
+          padding: EdgeInsets.only(bottom: 4),
+          child: Text(
+            'Cellule d\'intercession',
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.bold,
+              color: Color.fromARGB(255, 2, 2, 2),
+            ),
+          ),
+        ),
+      Container(
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
@@ -477,14 +495,6 @@ class _InfoCard extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-              Text(
-                'Cellule d\'intercession',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.black.withOpacity(0.08),
-                ),
-              ),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -527,6 +537,8 @@ class _InfoCard extends StatelessWidget {
           ),
         ],
       ),
+    ),
+      ],
     );
   }
 }
@@ -535,7 +547,21 @@ class _DonationCard extends StatelessWidget {
   const _DonationCard();
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Padding(
+          padding: EdgeInsets.only(bottom: 4),
+          child: Text(
+            'Apporter sa part',
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.bold,
+              color: Color.fromARGB(255, 2, 2, 2),
+            ),
+          ),
+        ),
+      Container(
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
@@ -551,14 +577,6 @@ class _DonationCard extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-              Text(
-                'Apporter sa part',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.black.withOpacity(0.08),
-                ),
-              ),
           ClipRRect(
             borderRadius: BorderRadius.circular(8),
             child: Image.asset(
@@ -609,6 +627,8 @@ class _DonationCard extends StatelessWidget {
           ),
         ],
       ),
+    ),
+      ],
     );
   }
 }

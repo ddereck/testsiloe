@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:get/get.dart';
 import 'package:siloe/src/commons/extensions/scaffold_extension.dart';
+import 'package:siloe/src/di/controllers_provider.dart';
 import 'package:siloe/src/features/user/domain/enums/user_role_enums.dart';
 import '../../../commons/ui/widgets/topbar_widget.dart';
-import '../../../core/utils/app_constants_utils.dart' show AppConstantsUtils;
-import '../../../di/controllers_provider.dart';
 import '../../notification/domain/entities/entity_notification.dart';
 import 'widgets/notification_item_widget.dart';
 

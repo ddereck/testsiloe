@@ -68,42 +68,50 @@ class TextArticleWidget extends StatelessWidget {
                       ],
                     ),
                   ),
-                  Obx(() {
-                    final user =
-                        ControllersProvider.USER_CONTROLLER.user.value;
-                    final canEdit = user?.roles.any((r) =>
-                            r.toUserRole().isAdminOrReverendOrEditeur) ??
-                        false;
-                    if (canEdit) {
-                      return IconButton(
-                        onPressed: () {
-                          RoutesUtils.changePage(
-                            AppRoutes.updateArticle,
-                            arguments: {ArticleDatas.articleArg: publication},
+                  Row(
+                    children: [
+                      Obx(() {
+                        final user =
+                            ControllersProvider.USER_CONTROLLER.user.value;
+                        final canEdit = user?.roles.any((r) =>
+                                r.toUserRole().isAdminOrReverendOrEditeur) ??
+                            false;
+                        if (canEdit) {
+                          return IconButton(
+                            onPressed: () {
+                              RoutesUtils.changePage(
+                                AppRoutes.updateArticle,
+                                arguments: {
+                                  ArticleDatas.articleArg: publication
+                                },
+                              );
+                            },
+                            icon: const Icon(Icons.edit, color: Colors.grey),
                           );
+                        }
+                        return const SizedBox.shrink();
+                      }),
+                      IconButton(
+                        icon:
+                            const Icon(TablerIcons.share, color: Colors.red),
+                        onPressed: () {
+                          final id = publication.id;
+                          if (id != null) {
+                            final shareUrl =
+                                "https://mobile.lereservoirdesiloe.com/publications/$id";
+                            Share.share(
+                              "Regarde cet article sur Le Réservoir de Siloe : $shareUrl",
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content:
+                                      Text("Lien de partage non disponible")),
+                            );
+                          }
                         },
-                        icon: const Icon(Icons.edit, color: Colors.grey),
-                      );
-                    }
-                    return const SizedBox.shrink();
-                  }),
-                  IconButton(
-                    icon: const Icon(TablerIcons.share, color: Colors.red),
-                    onPressed: () {
-                      final id = publication.id;
-                      if (id != null) {
-                        final shareUrl =
-                            "https://mobile.lereservoirdesiloe.com/publications/$id";
-                        Share.share(
-                          "Regarde cet article sur Le Réservoir de Siloe : $shareUrl",
-                        );
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text("Lien de partage non disponible")),
-                        );
-                      }
-                    },
+                      ),
+                    ],
                   ),
                 ],
               ),

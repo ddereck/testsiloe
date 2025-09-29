@@ -89,9 +89,13 @@ class UpsertArticleUIController extends GetxController {
       return;
     }
 
-    if (audioFile.value == null && selectedContentType.value?.typePublication == 'audio') {
-      fileNotPicked.value = true;
-      update();
+    if (audioFile.value == null &&
+        selectedContentType.value?.typePublication == 'audio') {
+      customSnackBar(
+        title: "Erreur",
+        message: "Veuillez sélectionner un fichier audio.",
+        isError: true,
+      );
       return;
     }
 
