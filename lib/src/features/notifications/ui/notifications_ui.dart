@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:get/get.dart';
 import 'package:siloe/src/commons/extensions/scaffold_extension.dart';
-import 'package:siloe/src/di/controllers_provider.dart';
-import 'package:siloe/src/features/user/domain/enums/user_role_enums.dart';
+import '../../../commons/ui/widgets/empty_widget.dart';
 import '../../../commons/ui/widgets/topbar_widget.dart';
-import '../../notification/domain/entities/entity_notification.dart';
+import '../../../core/utils/app_constants_utils.dart' show AppConstantsUtils;
+import '../../../di/di_helper.dart' show DiHelper;
+import '../controllers/notification_ui_controller.dart';
 import 'widgets/notification_item_widget.dart';
 
 class NotificationsUI extends StatelessWidget {
@@ -12,57 +14,48 @@ class NotificationsUI extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final user = ControllersProvider.USER_CONTROLLER.user.value;
-    final isReverend =
-        user?.roles.any((role) => role.toUserRole() == UserRoleEnums.reverend) ??
-            false;
+    final controller =
+        DiHelper.findOrCreate(creator: () => NotificationUIController())
+        ..getAllNotifications();
 
-    // Static data for demonstration purposes
-    final List<EntityNotification> notifications = [
-      EntityNotification(
-        titre: isReverend
-            ? 'Nouvelle demande de rencontre'
-            : 'Votre demande de rencontre a été acceptée',
-        message: isReverend
-            ? 'De: Jean Dupont'
-            : 'Votre rencontre avec le Révérend est confirmée pour le 25/12/2025.',
-        envoyeAt: DateTime.now().subtract(const Duration(hours: 1)).toString(),
-      ),
-      EntityNotification(
-        titre: isReverend
-            ? 'Nouvelle requête de prière'
-            : 'Confirmation de votre don',
-        message: isReverend
-            ? 'Une nouvelle requête de prière a été soumise.'
-            : 'Votre don de 50€ a bien été reçu. Merci pour votre soutien.',
-        envoyeAt: DateTime.now().subtract(const Duration(days: 1)).toString(),
-      ),
-      EntityNotification(
-        titre: 'Mise à jour de l\'application',
-        message:
-            'Une nouvelle version de l\'application est disponible. Mettez à jour maintenant pour profiter des dernières fonctionnalités.',
-        envoyeAt: DateTime.now().subtract(const Duration(days: 3)).toString(),
-      ),
-    ];
-
-    return Column(
-      children: [
-        TopbarWidget(title: "Notifications"),
-        Expanded(
-          child: ListView.separated(
-            padding: const EdgeInsets.all(16.0),
-            itemCount: notifications.length,
-            itemBuilder: (context, index) {
-              return NotificationItemWidget(
-                notification: notifications[index],
-                isRead: index > 0, // Mark first as unread, others as read
+    return RefreshIndicator(
+      onRefresh: () async => await controller.getAllNotifications(),
+      child: Column(
+        children: [
+          TopbarWidget(title: "Notifications", trailingNotificationType: false),
+          Expanded(
+            child: Obx(() {
+              return CustomScrollView(
+                slivers: [
+                  if (controller.notifications.isEmpty) ...[
+                    SliverFillRemaining(
+                      child: EmptyWidget(
+                        title: "Aucune notification",
+                        iconData: TablerIcons.lasso_polygon,
+                      ).paddingSymmetric(
+                          horizontal: AppConstantsUtils.scaffoldHPadding),
+                    ),
+                  ] else ...[
+                    SliverList.builder(
+                      itemCount: controller.notifications.length,
+                      itemBuilder: (context, index) => NotificationItemWidget(
+                        notification: controller.notifications[index],
+                      ).paddingOnly(
+                        top: index == 0
+                            ? (AppConstantsUtils.itemSpacing * 2)
+                            : 0,
+                        bottom: index == controller.notifications.length - 1 ? AppConstantsUtils.scaffoldWidth(context) : AppConstantsUtils.itemSpacingDualSide,
+                        left: AppConstantsUtils.scaffoldHPadding,
+                        right: AppConstantsUtils.scaffoldHPadding,
+                      ),
+                    ),
+                  ],
+                ],
               );
-            },
-            separatorBuilder: (context, index) =>
-                const SizedBox(height: 12),
+            }),
           ),
-        ),
-      ],
-    ).simpleScaffold;
+        ],
+      ),
+    ).emptyScaffold;
   }
 }

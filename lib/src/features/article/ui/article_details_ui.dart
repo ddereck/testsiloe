@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:siloe/src/commons/extensions/scaffold_extension.dart';
-import 'package:siloe/src/features/home/adapters/home_ui_controller.dart';
-import 'package:siloe/src/features/home/ui/widgets/floatting_bottom_nav.dart';
 import '../../../commons/ui/widgets/topbar_widget.dart';
 
 import '../../../core/enums/content_type.dart' show ContentType;
+import '../../../core/utils/app_constants_utils.dart' show AppConstantsUtils;
 import '../../../di/di_helper.dart' show DiHelper;
 import '../../authentication/presentation/adapters/auth_ui_controller.dart'
     show AuthUIController;
@@ -34,9 +33,6 @@ class ArticleDetailsUI extends StatelessWidget {
           ..initArticleByArgs();
     final commentUiController =
         DiHelper.findOrCreate(creator: () => CommentaireUIController());
-    final homeUiController =
-        DiHelper.findOrCreate(creator: () => HomeUIController());
-
     return PopScope(
       onPopInvokedWithResult: (didPop, _) {
         if (commentUiController.isEmojisVisible.value) {
@@ -48,57 +44,52 @@ class ArticleDetailsUI extends StatelessWidget {
         onTap: () {
           FocusScope.of(context).unfocus();
         },
-        child: Stack(
+        child: Column(
           children: [
-            Column(
-              children: [
-                TopbarWidget(title: "ACCUEIL"),
-                Expanded(
-                  child: Obx(() {
-                    final article = controller.article.value;
-                    final contentType = controller.currentContentType.value;
-                    if (article == null || contentType == null) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    } else {
-                      return SingleChildScrollView(
-                        padding: const EdgeInsets.only(bottom: 80),
-                        child: Column(
-                          children: [
-                            if (contentType == ContentType.text) ...[
-                              TextArticleWidget(publication: article),
-                            ] else if (contentType == ContentType.video) ...[
-                              VideoArticleWidget(publication: article),
-                            ] else ...[
-                              AudioArticleWidget(publication: article),
-                            ],
-                            // Commentaire
-                            Obx(() {
-                              if (authUiController.isCurrentlyLogin.value) {
-                                return AddCommentFormWidget(
-                                  publication: article,
-                                );
-                              }
-                              return const SizedBox.shrink();
-                            }),
-                            ListCommentsWidget(publication: article),
-                          ],
-                        ),
-                      );
-                    }
-                  }),
-                ),
-              ],
-            ),
-            Obx(
-              () => FloatingBottomNav(
-                selectedIndex: homeUiController.tabIndex.value,
-                onItemTapped: (index) {
-                  Get.back();
-                  homeUiController.changeTabIndex(index);
-                },
-              ),
+            TopbarWidget(title: "ACCUEIL"),
+            Expanded(
+              child: Obx(() {
+                final article = controller.article.value;
+                final contentType = controller.currentContentType.value;
+                if (article == null || contentType == null) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                } else {
+                  return SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        if (contentType == ContentType.text) ...[
+                          TextArticleWidget(publication: article),
+                        ] else if (contentType == ContentType.video) ...[
+                          VideoArticleWidget(publication: article),
+                        ] else ...[
+                          AudioArticleWidget(publication: article),
+                        ],
+                        // Commentaire
+                        if (contentType != ContentType.text) ...[
+                          Obx(() {
+                            if (authUiController.isCurrentlyLogin.value) {
+                              return AddCommentFormWidget(
+                                publication: article,
+                              ).marginSymmetric(
+                                  horizontal: AppConstantsUtils.scaffoldHPadding);
+                            }
+                            return const SizedBox.shrink();
+                          }),
+                          SizedBox(
+                            height: 400, // Hauteur fixe pour éviter l'overflow
+                            child: ListCommentsWidget(publication: article),
+                          ),
+                          SizedBox(
+                            height: 50,
+                          ),
+                        ],
+                      ],
+                    ),
+                  );
+                }
+              }),
             ),
           ],
         ),

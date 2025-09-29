@@ -27,8 +27,16 @@ class ArticleDetailsUIController extends GetxController {
   }
 
   void initArticleByArgs() async {
-    initArticle(Get.arguments?[ArticleDatas.articleArg] as EntityPublication?);
-    update();
+    final newArticle =
+        Get.arguments?[ArticleDatas.articleArg] as EntityPublication?;
+    if (newArticle == null) return;
+
+    // Only re-initialize if the article is different.
+    if (article.value?.id == newArticle.id) {
+      return;
+    }
+
+    initArticle(newArticle);
 
     if (article.value?.typePublicationId == null) return;
     final type = await ControllersProvider.PUBLICATION_TYPE_CONTROLLER
@@ -36,16 +44,19 @@ class ArticleDetailsUIController extends GetxController {
     if (type?.typePublication == null) return;
     final contentType = ContentType.fromString(type!.typePublication!);
     changeContentType(contentType);
+
+    if (contentType == ContentType.video) {
+      initYoutubeVideo();
+    } else {
+      // Dispose of the video controller if we are navigating to a non-video article.
+      youtubeController.value?.dispose();
+      youtubeController.value = null;
+    }
   }
 
   Rx<YoutubePlayerController?> youtubeController =
       Rx<YoutubePlayerController?>(null);
   void initVideoController(String initialVideoId) {
-    if (youtubeController.value != null) {
-      youtubeController.value?.dispose();
-      youtubeController.value = null; // d1H8W7kcLvw
-      update();
-    }
 
     if (initialVideoId.isEmpty) {
       AppLogger.instance.logger

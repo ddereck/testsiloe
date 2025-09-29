@@ -12,7 +12,10 @@ import 'package:siloe/src/features/home/adapters/home_ui_controller.dart';
 
 enum SettingsItem {
   user(label: "Utilisateur", icon: TablerIcons.user),
-  settings(label: "Paramètres", icon: TablerIcons.settings),
+  editeurs(label: "Editeurs", icon: TablerIcons.users_group),
+  reverend(label: "Révérend", icon: TablerIcons.user_square),
+  //administration(label: "Administration", icon: TablerIcons.settings),
+  // communuty(label: "Communauté", icon: TablerIcons.users_group),
   login(label: "Connexion", icon: TablerIcons.login),
   logout(label: "Deconnexion", icon: TablerIcons.logout),
   ;
@@ -66,8 +69,7 @@ class TopBarWidget extends StatelessWidget {
                   "Faire un don",
                   style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
                 ),
-                Image.asset('assets/images/donicon.jpeg', height: 30),
-                //const Icon(TablerIcons.gift, color: Colors.red, size: 28),
+                const Icon(TablerIcons.gift, color: Colors.red, size: 28),
                 const SizedBox(height: 4),
               ],
             ),
@@ -124,9 +126,10 @@ class TopBarWidget extends StatelessWidget {
                             .toList();
                         // Temporarily commented for testing purposes
                         if (!(ControllersProvider.USER_CONTROLLER.userRole.value
-                                ?.isAdminOrReverend ??
+                            ?.isAdminOrReverend ??
                             false)) {
-                          itemsWithoutLogin.remove(SettingsItem.settings);
+                          itemsWithoutLogin.remove(SettingsItem.editeurs);
+                          itemsWithoutLogin.remove(SettingsItem.reverend);
                         }
                         return itemsWithoutLogin.map((item) {
                           // Check if user is connected or not
@@ -267,8 +270,11 @@ class TopBarWidget extends StatelessWidget {
       case SettingsItem.user:
         Navigator.pushNamed(context, '/user');
         break;
-      case SettingsItem.settings:
-        RoutesUtils.changePage(AppRoutes.settings);
+      case SettingsItem.editeurs:
+        RoutesUtils.changePage(AppRoutes.editeurs);
+        break;
+      case SettingsItem.reverend:
+        RoutesUtils.changePage(AppRoutes.reverend);
         break;
       case SettingsItem.login:
         RoutesUtils.changePage(AppRoutes.login);

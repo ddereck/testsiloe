@@ -5,10 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:get/get.dart';
 import 'package:share_plus/share_plus.dart' show SharePlus, ShareParams;
-import 'package:siloe/src/core/utils/routes_utils.dart';
-import 'package:siloe/src/di/controllers_provider.dart';
-import 'package:siloe/src/features/article/adapters/article_datas.dart';
-import 'package:siloe/src/features/user/domain/enums/user_role_enums.dart';
 
 import '../../../../core/enums/content_type.dart' show ContentType;
 import '../../../../core/utils/app_constants_utils.dart' show AppConstantsUtils;
@@ -30,12 +26,12 @@ class AudioArticleWidget extends StatelessWidget {
           ..initArticle(publication)
           ..changeContentType(ContentType.audio)
           ..initAudio();
-    final String imageUrl =
-        publication.img != null && publication.img!.isNotEmpty
-            ? 'https://mobile.lereservoirdesiloe.com${publication.img}'
-            : ''; // ou une image par défaut
+    final String imageUrl = publication.img != null && publication.img!.isNotEmpty
+        ? 'https://mobile.lereservoirdesiloe.com${publication.img}'
+        : ''; // ou une image par défaut
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      spacing: AppConstantsUtils.itemSpacingDualSide,
       children: [
         Container(
           height: 200,
@@ -52,134 +48,109 @@ class AudioArticleWidget extends StatelessWidget {
               fit: BoxFit.cover,
             ),
           ),
+         // child: const Icon(Icons.broken_image),
         ),
-        const SizedBox(height: 16),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (publication.titre != null)
-                    Text(
-                      publication.titre!,
-                      style: TextConfig.getSimpleTextStyle(true,
-                          fontWeight: FontWeight.bold, size: 18),
-                    ),
-                  const SizedBox(height: 4),
-                  if (publication.auteur != null)
-                    Text(
-                      publication.auteur!,
-                      style: TextConfig.getSimpleTextStyle(false,
-                          color: Colors.grey, size: 14),
-                    ),
-                ],
-              ),
-            ),
-            Obx(() {
-              final user = ControllersProvider.USER_CONTROLLER.user.value;
-              final canEdit = user?.roles.any(
-                      (r) => r.toUserRole().isAdminOrReverendOrEditeur) ??
-                  false;
-              if (canEdit) {
-                return IconButton(
-                  onPressed: () {
-                    RoutesUtils.changePage(
-                      AppRoutes.updateArticle,
-                      arguments: {ArticleDatas.articleArg: publication},
-                    );
-                  },
-                  icon: const Icon(Icons.edit, color: Colors.grey),
-                );
-              }
-              return const SizedBox.shrink();
-            }),
-          ],
-        ),
-        const SizedBox(height: 16),
+        if (publication.titre != null) ...[
+          Text(
+            publication.titre ?? "",
+            style: TextConfig.getSimpleTextStyle(true),
+          ),
+        ],
+        if (publication.auteur != null) ...[
+          Text(
+            publication.auteur ?? "",
+            style: TextConfig.getSimpleTextStyle(true,
+                color: Colors.grey, size: AppConstantsUtils.smallSize),
+          ),
+        ],
         Obx(() {
           final position = controller.audioPosition.value;
           final duration = controller.audioDuration.value;
+          // Si tu gères le buffering, remplace par la valeur correcte, sinon Duration.zero
           final buffered = controller.bufferedPosition.value;
           return ProgressBar(
             progress: position,
             buffered: buffered,
-            total: duration == Duration.zero
-                ? const Duration(seconds: 1)
-                : duration,
+            total: duration == Duration.zero ? Duration(seconds: 1) : duration,
             baseBarColor: Colors.grey,
             progressBarColor: Colors.red,
             bufferedBarColor: Colors.red.shade300,
             onSeek: (newPosition) {
+              debugPrint('User selected a new time: $newPosition');
               controller.audioPlayer.seek(newPosition);
             },
-          );
+          ).paddingSymmetric(horizontal: AppConstantsUtils.containerHPadding);
         }),
-        const SizedBox(height: 16),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            IconButton(
-              icon: const Icon(TablerIcons.volume, color: Colors.red),
-              onPressed: () {
-                showModalBottomSheet(
-                  context: context,
-                  builder: (context) {
-                    return StreamBuilder<double>(
-                      stream: controller.audioPlayer.volumeStream,
-                      builder: (context, snapshot) {
-                        final volume = snapshot.data ?? 0.5;
-                        return Slider(
-                          value: volume,
-                          min: 0.0,
-                          max: 1.0,
-                          onChanged: controller.audioPlayer.setVolume,
-                        );
-                      },
-                    );
-                  },
-                );
-              },
-            ),
-            IconButton(
-              icon: const Icon(TablerIcons.circle_chevron_left,
-                  color: Colors.red, size: 40),
-              onPressed: controller.reculer10Secondes,
-            ),
-            Obx(() {
-              return CircleAvatar(
-                radius: 30,
-                backgroundColor: Colors.red,
-                child: IconButton(
-                  icon: Icon(
-                    controller.isPlaying.value
-                        ? Icons.pause_rounded
-                        : Icons.play_arrow_rounded,
-                    color: Colors.white,
-                  ),
-                  onPressed: controller.togglePlayPause,
+        SizedBox(
+          width: double.infinity,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            spacing: AppConstantsUtils.itemSpacing,
+            children: [
+              InkWell(
+                onTap: () {},
+                child: Icon(
+                  TablerIcons.volume,
+                  color: Colors.red,
                 ),
-              );
-            }),
-            IconButton(
-              icon: const Icon(TablerIcons.circle_chevron_right,
-                  color: Colors.red, size: 40),
-              onPressed: controller.avancer10Secondes,
-            ),
-            IconButton(
-              icon: const Icon(TablerIcons.share_2, color: Colors.red),
-              onPressed: () {
-                final shareUrl = publication.url;
-                if (shareUrl != null && shareUrl.isNotEmpty) {
-                  SharePlus.instance.share(
-                    ShareParams(uri: Uri.parse(shareUrl)),
-                  );
-                }
-              },
-            ),
-          ],
+              ),
+              InkWell(
+                onTap: () {
+                  controller.reculer10Secondes();
+                },
+                child: Icon(
+                  TablerIcons.circle_chevron_left,
+                  color: Colors.red,
+                  size: 40,
+                ),
+              ),
+              Obx(() {
+                return InkWell(
+                  onTap: () {
+                    controller.togglePlayPause();
+                  },
+                  child: CircleAvatar(
+                    radius: 30,
+                    backgroundColor: Colors.red,
+                    child: Icon(
+                      controller.isPlaying.value
+                          ? Icons.pause_rounded
+                          : Icons.play_arrow_rounded,
+                      color: Colors.white,
+                    ),
+                  ),
+                );
+              }),
+              InkWell(
+                onTap: () {
+                  controller.avancer10Secondes();
+                },
+                child: Icon(
+                  TablerIcons.circle_chevron_right,
+                  color: Colors.red,
+                  size: 40,
+                ),
+              ),
+              InkWell(
+                onTap: () {
+                  // Partager l'URL audio uniquement
+                  final shareUrl = publication.url;
+                  if (shareUrl != null && shareUrl.isNotEmpty) {
+                    SharePlus.instance.share(
+                      ShareParams(uri: Uri.parse(shareUrl)),
+                    );
+                  }
+                },
+                child: Icon(
+                  TablerIcons.share_2,
+                  color: Colors.red,
+                  size: 20,
+                ),
+              ),
+            ],
+          ),
         ),
       ],
     ).paddingSymmetric(

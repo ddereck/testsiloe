@@ -8,10 +8,8 @@ import 'package:siloe/src/features/publication/domain/entities/entity_publicatio
 import '../../../commons/functions/widgets_functions.dart' show customSnackBar;
 import '../../../core/utils/routes_utils.dart' show RoutesUtils, AppRoutes;
 import '../../../di/controllers_provider.dart' show ControllersProvider;
-import '../../../di/di_helper.dart';
 import '../../categorie/domain/entities/entity_categorie.dart'
     show EntityCategorie;
-import '../../categorie/presentation/adapters/categorie_ui_controller.dart';
 import '../../publication_type/domain/entities/entity_publication_type.dart'
     show EntityPublicationType;
 import '../../publication_type/presentation/adapters/publication_type_ui_controller.dart'
@@ -47,6 +45,7 @@ class UpsertArticleUIController extends GetxController {
 
   Rx<bool> isSubmitting = Rx<bool>(false);
   Rx<bool> fileNotPicked = Rx<bool>(false);
+
 
   /// Prépare le contrôleur pour une création (formulaire vierge)
   void prepareForCreate() {
@@ -89,13 +88,9 @@ class UpsertArticleUIController extends GetxController {
       return;
     }
 
-    if (audioFile.value == null &&
-        selectedContentType.value?.typePublication == 'audio') {
-      customSnackBar(
-        title: "Erreur",
-        message: "Veuillez sélectionner un fichier audio.",
-        isError: true,
-      );
+    if (audioFile.value == null) {
+      fileNotPicked.value = true;
+      update();
       return;
     }
 
@@ -135,15 +130,28 @@ class UpsertArticleUIController extends GetxController {
         addArticleFormState.currentState?.reset();
         clearContent();
 
+        // Rediriger vers les détails de l'article créé
         if (response.id != null) {
-          Get.back();
-          final articleDetails = await ControllersProvider
-              .PUBLICATION_CONTROLLER
-              .getPublicationById(id: response.id!);
+          Get.back(); // Fermer la page de création
 
-          if (articleDetails != null) {
-            RoutesUtils.changePage(AppRoutes.articleDetails,
-                arguments: {'articleArg': articleDetails});
+          // Récupérer l'article complet depuis l'API
+          try {
+            final articleDetails = await ControllersProvider
+                .PUBLICATION_CONTROLLER
+                .getPublicationById(id: response.id!);
+
+            if (articleDetails != null) {
+              // Naviguer vers les détails avec l'article complet
+              RoutesUtils.changePage(AppRoutes.articleDetails,
+                  arguments: {'articleArg': articleDetails});
+              print(
+                  'DEBUG - Navigation vers les détails de l\'article ID: ${response.id}');
+            } else {
+              print(
+                  'DEBUG - Impossible de récupérer les détails de l\'article ID: ${response.id}');
+            }
+          } catch (e) {
+            print('DEBUG - Erreur lors de la récupération des détails: $e');
           }
         }
       } else {
@@ -203,6 +211,7 @@ class UpsertArticleUIController extends GetxController {
       update();
 
       if (response != null) {
+        // Mettre à jour l'article local avec les nouvelles données
         article.value = response;
         update();
 
@@ -212,7 +221,7 @@ class UpsertArticleUIController extends GetxController {
           isError: false,
         );
 
-        Get.back();
+        Get.back(); // Fermer la page de mise à jour
         RoutesUtils.changePage(AppRoutes.home);
       } else {
         customSnackBar(
@@ -232,39 +241,50 @@ class UpsertArticleUIController extends GetxController {
     }
   }
 
-  final isInitialized = false.obs;
+  void initPublication() {
+    article.value =
+        Get.arguments?[ArticleDatas.articleArg] as EntityPublication?;
+    update();
+  }
 
-  void initForUpdate() {
-    if (isInitialized.value) return;
-
-    article.value = Get.arguments?[ArticleDatas.articleArg] as EntityPublication?;
-    if (article.value == null) return;
-
+  void initControllers(PublicationTypesUIController publicationTypesUIController) {
     titleController.text = article.value?.titre ?? '';
     contentController.text = article.value?.description ?? '';
     urlController.text = article.value?.url ?? '';
     authorController.text = article.value?.auteur ?? '';
     textArticleController.text = article.value?.article ?? '';
 
-    final categorieUiController = DiHelper.findOrCreate(creator: () => CategorieUIController());
-    final publicationTypesUIController = DiHelper.findOrCreate(creator: () => PublicationTypesUIController());
+    if (article.value?.typePublicationId != null) {
+      final typeId = article.value!.typePublicationId!;
+     final type = publicationTypesUIController.publicationsTypes.value
+    .firstWhereOrNull((e) => e.id == typeId);
 
-    categorieUiController.initCategories();
-    publicationTypesUIController.initPublicationTypes();
+      selectedContentType.value = type;
+    }
 
-    once(categorieUiController.categories, (List<EntityCategorie> categories) {
-      if (article.value?.categorieId != null) {
-        selectedCategory.value = categories.firstWhereOrNull((c) => c.id == article.value!.categorieId);
-      }
-    });
+    // Image de couverture
+    if (article.value?.img != null) {
+      //coverImageFile.value = null;
+    }
 
-    once(publicationTypesUIController.publicationsTypes, (List<EntityPublicationType> types) {
-      if (article.value?.typePublicationId != null) {
-        selectedContentType.value = types.firstWhereOrNull((t) => t.id == article.value!.typePublicationId);
-      }
-    });
+    // Fichier audio
+    if (article.value?.file != null) {
+      //audioFile.value = null;
+    }
+    update();
+  }
 
-    isInitialized.value = true;
+  void iniCategoryController(List<EntityCategorie> categories) {
+    selectedCategory.value = categories
+        .where((element) => element.id == article.value?.categorieId)
+        .firstOrNull;
+    update();
+  }
+
+  void iniContentTypeController(List<EntityPublicationType> types) {
+    selectedContentType.value = types
+        .where((element) => element.id == article.value?.typePublicationId)
+        .firstOrNull;
     update();
   }
 
@@ -278,12 +298,10 @@ class UpsertArticleUIController extends GetxController {
     selectedContentType.value = null;
     coverImageFile.value = null;
     audioFile.value = null;
-    isInitialized.value = false;
   }
 
   @override
   void onClose() {
-    clearContent();
     titleController.dispose();
     contentController.dispose();
     urlController.dispose();
